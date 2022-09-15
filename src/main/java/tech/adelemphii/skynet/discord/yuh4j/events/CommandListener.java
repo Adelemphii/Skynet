@@ -30,7 +30,8 @@ public class CommandListener implements EventListener {
 
     @Override
     public void onEvent(@NotNull GenericEvent genericEvent) {
-        if(genericEvent instanceof MessageReceivedEvent event) {
+        if(genericEvent instanceof MessageReceivedEvent) {
+            MessageReceivedEvent event = (MessageReceivedEvent) genericEvent;
             if(event.getAuthor().isBot() || event.getAuthor().isSystem()) {
                 return;
             }

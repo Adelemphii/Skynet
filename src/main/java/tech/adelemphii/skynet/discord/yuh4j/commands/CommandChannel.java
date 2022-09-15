@@ -3,7 +3,6 @@ package tech.adelemphii.skynet.discord.yuh4j.commands;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import tech.adelemphii.skynet.discord.BaseCommand;
 import tech.adelemphii.skynet.discord.yuh4j.Yuh4j;
@@ -95,17 +94,14 @@ public class CommandChannel implements BaseCommand {
 
     private boolean set(String[] args, Server server) {
         switch (args[1].toUpperCase()) {
-            case "SCHEDULE_CHANNEL" -> {
+            case "SCHEDULE_CHANNEL":
                 server.setScheduleChannel(Long.parseLong(args[2]));
                 return true;
-            }
-            case "TIMELINE_CHANNEL" -> {
+        case "TIMELINE_CHANNEL":
                 server.setTimeline(Long.parseLong(args[2]));
                 return true;
-            }
-            default -> {
+            default:
                 return false;
-            }
         }
     }
 

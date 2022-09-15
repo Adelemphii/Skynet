@@ -22,7 +22,8 @@ public class ScheduleListener implements EventListener {
 
     @Override
     public void onEvent(@NotNull GenericEvent genericEvent) {
-        if(genericEvent instanceof MessageReceivedEvent event) {
+        if(genericEvent instanceof MessageReceivedEvent) {
+            MessageReceivedEvent event = (MessageReceivedEvent) genericEvent;
             Guild guild = event.getGuild();
             Server server = discordBot.getServerConfiguration().getServer(guild.getIdLong());
             Message message = event.getMessage();
@@ -36,7 +37,8 @@ public class ScheduleListener implements EventListener {
                 }
             }
         }
-        if(genericEvent instanceof MessageUpdateEvent event) {
+        if(genericEvent instanceof MessageUpdateEvent) {
+            MessageUpdateEvent event = (MessageUpdateEvent) genericEvent;
             Guild guild = event.getGuild();
             Server server = discordBot.getServerConfiguration().getServer(guild.getIdLong());
             Message message = event.getMessage();

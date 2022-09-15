@@ -22,7 +22,8 @@ public class ReadyListener implements EventListener {
             discordBot.getPlugin().getLogger().info("Yuh4j: API is ready!");
         }
 
-        if(event instanceof GuildReadyEvent guildReadyEvent) {
+        if(event instanceof GuildReadyEvent) {
+            GuildReadyEvent guildReadyEvent = (GuildReadyEvent) event;
             Yuh4jMessageUtility.sendMessage(guildReadyEvent.getGuild(), discordBot);
         }
     }
