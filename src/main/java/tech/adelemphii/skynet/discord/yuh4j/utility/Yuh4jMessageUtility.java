@@ -82,9 +82,9 @@ public class Yuh4jMessageUtility {
         Pattern pattern = Pattern.compile(regex);
 
         MessageHistory messageHistory = textChannel.getHistory();
-        messageHistory.retrievePast(10).complete();
+        messageHistory.retrievePast(50).complete();
         for(Message message : messageHistory.getRetrievedHistory()) {
-            String messageRaw = message.getContentRaw();
+            String messageRaw = message.getContentStripped();
             Matcher matcher = pattern.matcher(messageRaw);
             while(matcher.find()) {
                 String match = matcher.group();

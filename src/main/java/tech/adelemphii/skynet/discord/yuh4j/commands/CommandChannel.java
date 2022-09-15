@@ -35,7 +35,6 @@ public class CommandChannel implements BaseCommand {
         }
         if(args[0].equalsIgnoreCase("set")) {
             if(args.length < 3) {
-                System.out.println("Length");
                 GeneralUtility.addNegativeReaction(event.getMessage());
                 help(server, event.getMessage());
                 return;
@@ -62,7 +61,6 @@ public class CommandChannel implements BaseCommand {
         } else if(args[0].equalsIgnoreCase("help")) {
             help(server, event.getMessage());
         } else {
-            System.out.println("All");
             help(server, event.getMessage());
         }
     }

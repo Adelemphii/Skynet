@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import tech.adelemphii.skynet.Skynet;
 import tech.adelemphii.skynet.discord.BaseCommand;
 import tech.adelemphii.skynet.discord.yuh4j.commands.CommandChannel;
@@ -74,7 +75,7 @@ public class Yuh4j {
     public boolean login(String token) {
         try {
             api = JDABuilder.createDefault(token, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS,
-                    GatewayIntent.GUILD_MESSAGES).build();
+                    GatewayIntent.GUILD_MESSAGES).disableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOJI, CacheFlag.STICKER).build();
             return true;
         } catch(InvalidTokenException e) {
             e.printStackTrace();
