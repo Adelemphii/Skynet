@@ -68,7 +68,7 @@ public class CommandHelp implements BaseCommand {
 
         builder.setDescription(sb);
 
-        builder.setColor(Color.BLACK);
+        builder.setColor(Color.decode("#5377ff"));
 
         return builder.build();
     }

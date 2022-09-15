@@ -124,7 +124,7 @@ public class Yuh4jMessageUtility {
 
             embedBuilder.addField("<" + timestamp + ">", "**[" + name + "](" + message.getJumpUrl() + ")**", false);
         }
-        embedBuilder.setColor(Color.BLUE);
+        embedBuilder.setColor(Color.decode("#5377ff"));
         return embedBuilder.build();
     }
 
