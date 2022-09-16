@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
@@ -48,6 +49,21 @@ public class ScheduleListener implements EventListener {
                     String error = Yuh4jMessageUtility.sendMessage(guild, discordBot);
                     if(error != null) {
                         message.reply("Error: " + error).queue();
+                    }
+                }
+            }
+        }
+        if(genericEvent instanceof MessageDeleteEvent) {
+            MessageDeleteEvent event = (MessageDeleteEvent) genericEvent;
+
+            Guild guild = event.getGuild();
+            Server server = discordBot.getServerConfiguration().getServer(guild.getIdLong());
+
+            if(event.getChannelType() == ChannelType.TEXT) {
+                if(event.getChannel().asTextChannel().getIdLong() == server.getScheduleChannel()) {
+                    String error = Yuh4jMessageUtility.sendMessage(guild, discordBot);
+                    if(error != null) {
+                        discordBot.getPlugin().getLogger().severe("[Yuh4j] Error:" + error);
                     }
                 }
             }

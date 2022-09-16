@@ -49,7 +49,7 @@ public class CommandListener implements EventListener {
             if(server == null) {
                 Skynet.getInstance().getLogger().info("Server \"" + guild.getIdLong() + ":" + guild.getName()
                         + "\" does not have a saved config, generating a new one.");
-                server = new Server(guild.getIdLong(), 0, 0, 0, 0, null);
+                server = new Server(guild.getIdLong(), 0, 0, 0, 0, null, 30);
                 discordBot.getServerConfiguration().addServer(server);
             }
 

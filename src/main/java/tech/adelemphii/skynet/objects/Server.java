@@ -9,11 +9,13 @@ public class Server {
     private long timeline;
     private long timelineMessage;
 
-    private long adminRoleID = 0;
+    private long adminRoleID;
     private String prefix = "!";
 
+    private int minutesBeforeOpTimer;
+
     public Server(long serverID, long scheduleChannel, long timeline, long timelineMessage,
-                  long adminRoleID, @Nullable String prefix) {
+                  long adminRoleID, @Nullable String prefix, int minutesBeforeOpTimer) {
         this.serverID = serverID;
         this.scheduleChannel = scheduleChannel;
         this.timeline = timeline;
@@ -22,6 +24,7 @@ public class Server {
         if(prefix != null) {
             this.prefix = prefix;
         }
+        this.minutesBeforeOpTimer = minutesBeforeOpTimer;
     }
 
     public long getServerID() {
@@ -68,6 +71,14 @@ public class Server {
         this.prefix = prefix;
     }
 
+    public int getMinutesBeforeOpTimer() {
+        return minutesBeforeOpTimer;
+    }
+
+    public void setMinutesBeforeOpTimer(int minutesBeforeOpTimer) {
+        this.minutesBeforeOpTimer = minutesBeforeOpTimer;
+    }
+
     @Override
     public String toString() {
         return "Server{" +
@@ -77,6 +88,7 @@ public class Server {
                 ", timelineMessage=" + timelineMessage +
                 ", adminRoleID=" + adminRoleID +
                 ", prefix='" + prefix + '\'' +
+                ", minutesBeforeOpTimer=" + minutesBeforeOpTimer +
                 '}';
     }
 }

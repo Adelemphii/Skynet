@@ -1,3 +1,4 @@
 name: Skynet
 version: '${project.version}'
 main: tech.adelemphii.skynet.Skynet
+api-version: 1.13

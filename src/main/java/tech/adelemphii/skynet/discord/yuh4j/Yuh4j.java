@@ -13,6 +13,7 @@ import tech.adelemphii.skynet.discord.yuh4j.commands.CommandHelp;
 import tech.adelemphii.skynet.discord.yuh4j.events.CommandListener;
 import tech.adelemphii.skynet.discord.yuh4j.events.ReadyListener;
 import tech.adelemphii.skynet.discord.yuh4j.events.ScheduleListener;
+import tech.adelemphii.skynet.objects.Server;
 import tech.adelemphii.skynet.utility.data.Configuration;
 import tech.adelemphii.skynet.utility.data.ServerConfiguration;
 
@@ -24,6 +25,7 @@ public class Yuh4j {
 
     private JDA api;
     private final Map<String, BaseCommand> commands = new HashMap<>();
+    private Map<Server, Runnable> updateRunnables = new HashMap<>();
 
     private final Skynet plugin;
     private final Configuration configuration;
@@ -48,7 +50,7 @@ public class Yuh4j {
         }
         registerEvents();
         registerCommands();
-        api.getPresence().setActivity(Activity.playing("Yuh4j by Adelemphii"));
+        api.getPresence().setActivity(Activity.playing("Yuh 2.0 by Adelemphii"));
 
     }
 
@@ -101,5 +103,17 @@ public class Yuh4j {
 
     public ServerConfiguration getServerConfiguration() {
         return serverConfiguration;
+    }
+
+    public Map<Server, Runnable> getUpdateRunnables() {
+        return updateRunnables;
+    }
+
+    public void setUpdateRunnables(Map<Server, Runnable> updateRunnables) {
+        this.updateRunnables = updateRunnables;
+    }
+
+    public void addUpdateRunnable(Server server, Runnable runnable) {
+        this.updateRunnables.put(server, runnable);
     }
 }
