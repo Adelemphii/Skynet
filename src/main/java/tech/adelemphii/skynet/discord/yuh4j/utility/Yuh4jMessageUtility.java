@@ -98,7 +98,7 @@ public class Yuh4jMessageUtility {
             return null;
         }
 
-        String regex = "@everyone(.*?)\\s*[,|-]*\\s*<t:([0-9]*(?=(?::[tTdDfFR])?>))";
+        String regex = "@everyone(?:\\s*)(.*?)(?:\\s*[,|-]*\\s*<t:)([0-9]*(?=(?::[tTdDfFR])?>))";
 
         Pattern pattern = Pattern.compile(regex);
 
@@ -112,7 +112,7 @@ public class Yuh4jMessageUtility {
 
                 String timestamp = StringUtils.substringAfter(match, "<");
                 String name = StringUtils.substringBefore(match, " <");
-                name = name.replace("@everyone ", "");
+                name = name.replace("@everyone ", "").replaceAll("\n", "");
 
                 long timestampMillis;
                 try {
@@ -145,7 +145,7 @@ public class Yuh4jMessageUtility {
 
             embedBuilder.addField("<" + timestamp + ">", "**[" + name + "](" + message.getJumpUrl() + ")**", false);
         }
-        embedBuilder.setColor(Color.decode("#5377ff"));
+        embedBuilder.setColor(getTheme());
         return embedBuilder.build();
     }
 
@@ -159,7 +159,7 @@ public class Yuh4jMessageUtility {
     public static Map<String, MessageEmbed> getPingsWhenTime(Mission mission, long timestamp) {
         long timeUntilMission = getTimeUntilMission(mission);
 
-        if(timeUntilMission >= timestamp) {
+        if(timeUntilMission >= timestamp || timeUntilMission < 0) {
             return null;
         }
 
@@ -192,10 +192,13 @@ public class Yuh4jMessageUtility {
 
         embedBuilder.setDescription("[" + mission.getMissionName() + "](" + mission.getMessage().getJumpUrl() + ") begins <" + mission.getTimestamp() + ":R>");
 
-        embedBuilder.setColor(Color.decode("#5377ff"));
+        embedBuilder.setColor(getTheme());
         Map<String, MessageEmbed> embedMap = new HashMap<>();
         embedMap.put(sb.toString(), embedBuilder.build());
         return embedMap;
     }
 
+    public static Color getTheme() {
+        return Color.decode("#5377ff");
+    }
 }
