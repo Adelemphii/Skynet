@@ -27,7 +27,7 @@ public class CommandChannel implements BaseCommand {
         Server server = discordBot.getServerConfiguration().getServer(guild.getIdLong());
 
         String[] args = event.getMessage().getContentRaw()
-                .replace(server.getPrefix() + "channel ", "").split(" ");
+                .replace(server.getPrefix() + name(), "").split(" ");
         if(args.length == 0) {
             GeneralUtility.addNegativeReaction(event.getMessage());
             help(server, event.getMessage());
@@ -75,6 +75,7 @@ public class CommandChannel implements BaseCommand {
         builder.addField("Argument 2", "Valid types: schedule_channel, timeline_channel", false);
         builder.addField("Argument 3", "Channel ID, such as 819699195681832991", false);
 
+        builder.setColor(Yuh4jMessageUtility.getTheme());
         message.reply("Examples: " + server.getPrefix() + "channel set schedule_channel 819699195681832991 or " +
                 server.getPrefix() + "channel update").setEmbeds(builder.build()).queue();
     }
@@ -95,7 +96,7 @@ public class CommandChannel implements BaseCommand {
             case "SCHEDULE_CHANNEL":
                 server.setScheduleChannel(Long.parseLong(args[2]));
                 return true;
-        case "TIMELINE_CHANNEL":
+            case "TIMELINE_CHANNEL":
                 server.setTimeline(Long.parseLong(args[2]));
                 return true;
             default:

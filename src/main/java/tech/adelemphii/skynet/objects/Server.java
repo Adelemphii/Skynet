@@ -12,7 +12,7 @@ public class Server {
     private long adminRoleID;
     private String prefix = "!";
 
-    private int minutesBeforeOpTimer;
+    private int minutesBeforeOpTimer = 30;
 
     public Server(long serverID, long scheduleChannel, long timeline, long timelineMessage,
                   long adminRoleID, @Nullable String prefix, int minutesBeforeOpTimer) {
@@ -24,7 +24,9 @@ public class Server {
         if(prefix != null) {
             this.prefix = prefix;
         }
-        this.minutesBeforeOpTimer = minutesBeforeOpTimer;
+        if(minutesBeforeOpTimer != 0) {
+            this.minutesBeforeOpTimer = minutesBeforeOpTimer;
+        }
     }
 
     public long getServerID() {

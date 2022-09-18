@@ -53,7 +53,7 @@ public class CommandListener implements EventListener {
                 discordBot.getServerConfiguration().addServer(server);
             }
 
-            String prefix = discordBot.getConfiguration().getPrefix();
+            String prefix = server.getPrefix();
             if(message.getContentRaw().startsWith(prefix)) {
                 String[] split = message.getContentRaw().split(" ");
                 if(split.length == 0) {

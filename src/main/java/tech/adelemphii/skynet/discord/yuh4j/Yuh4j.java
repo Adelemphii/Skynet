@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import tech.adelemphii.skynet.Skynet;
 import tech.adelemphii.skynet.discord.BaseCommand;
 import tech.adelemphii.skynet.discord.yuh4j.commands.CommandChannel;
+import tech.adelemphii.skynet.discord.yuh4j.commands.CommandConfig;
 import tech.adelemphii.skynet.discord.yuh4j.commands.CommandHelp;
 import tech.adelemphii.skynet.discord.yuh4j.events.CommandListener;
 import tech.adelemphii.skynet.discord.yuh4j.events.ReadyListener;
@@ -71,6 +72,7 @@ public class Yuh4j {
 
     private void registerCommands() {
         commands.put("channel", new CommandChannel(this));
+        commands.put("config", new CommandConfig(this));
         commands.put("help", new CommandHelp(this));
     }
 
