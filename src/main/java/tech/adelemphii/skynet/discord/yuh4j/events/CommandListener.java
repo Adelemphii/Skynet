@@ -3,7 +3,6 @@ package tech.adelemphii.skynet.discord.yuh4j.events;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
@@ -11,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import tech.adelemphii.skynet.Skynet;
 import tech.adelemphii.skynet.discord.BaseCommand;
 import tech.adelemphii.skynet.discord.yuh4j.Yuh4j;
-import tech.adelemphii.skynet.discord.yuh4j.utility.Yuh4jMessageUtility;
 import tech.adelemphii.skynet.objects.Cooldown;
 import tech.adelemphii.skynet.objects.Server;
 import tech.adelemphii.skynet.utility.GeneralUtility;
@@ -36,12 +34,6 @@ public class CommandListener implements EventListener {
                 return;
             }
 
-            if(!event.isFromGuild() || event.isWebhookMessage()
-                    || event.getChannel().getType() != ChannelType.TEXT) {
-                event.getMessage().reply("I can only accept commands in a server.").queue();
-                return;
-            }
-
             Guild guild = event.getGuild();
             Message message = event.getMessage();
 
@@ -55,6 +47,11 @@ public class CommandListener implements EventListener {
 
             String prefix = server.getPrefix();
             if(message.getContentRaw().startsWith(prefix)) {
+                if(!event.isFromGuild() || event.isWebhookMessage()) {
+                    event.getMessage().reply("I can only accept commands in a server.").queue();
+                    return;
+                }
+
                 String[] split = message.getContentRaw().split(" ");
                 if(split.length == 0) {
                     return;
