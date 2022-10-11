@@ -65,14 +65,14 @@ public class ReadyListener implements EventListener {
                     Map<String, MessageEmbed> messageEmbedMap = Yuh4jMessageUtility.getPingsWhenTime(mission,
                             timeBeforeOp * 60000L / 1000L);
 
-                    if(messageEmbedMap == null) {
+                    if(messageEmbedMap == null || messageEmbedMap.isEmpty()) {
                         return;
                     }
                     String text = messageEmbedMap.keySet().stream().findFirst().get();
                     MessageEmbed messageEmbed = messageEmbedMap.values().stream().findFirst().get();
 
                     String error = Yuh4jMessageUtility.sendBreadPings(guildReadyEvent.getGuild(), discordBot, messageEmbed,
-                            missions, text, 2);
+                            missions, text, timeBeforeOp);
 
                     if(error != null) {
                         discordBot.getPlugin().getLogger().severe("Error: " + error);
