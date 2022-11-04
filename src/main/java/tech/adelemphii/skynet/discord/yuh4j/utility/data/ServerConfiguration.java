@@ -1,4 +1,4 @@
-package tech.adelemphii.skynet.utility.data;
+package tech.adelemphii.skynet.discord.yuh4j.utility.data;
 
 import com.google.gson.Gson;
 import tech.adelemphii.skynet.Skynet;
