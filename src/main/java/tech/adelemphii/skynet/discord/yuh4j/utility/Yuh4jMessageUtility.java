@@ -1,7 +1,6 @@
 package tech.adelemphii.skynet.discord.yuh4j.utility;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
@@ -12,9 +11,8 @@ import tech.adelemphii.skynet.discord.yuh4j.Yuh4j;
 import tech.adelemphii.skynet.objects.Server;
 
 import java.awt.*;
-import java.time.LocalDateTime;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -141,7 +139,7 @@ public class Yuh4jMessageUtility {
             Message message = mission.getMessage();
             String timestamp = mission.getTimestamp();
             String name = StringUtils.substringBefore(mission.getMissionName(), " <");
-            name = name.replace("@everyone ", "");
+            name = name.replace("@everyone", "");
 
             embedBuilder.addField("<" + timestamp + ">", "**[" + name + "](" + message.getJumpUrl() + ")**", false);
         }
