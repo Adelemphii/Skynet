@@ -6,11 +6,8 @@ import me.nurio.minecraft.pinger.beans.OfflineMinecraftServerStatus;
 import me.nurio.minecraft.pinger.beans.Players;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.io.FileUtils;
 import tech.adelemphii.skynet.Skynet;
@@ -26,11 +23,6 @@ import java.util.Base64;
 import java.util.Map;
 
 public class GeneralUtility {
-
-    public static boolean isAdmin(Guild guild, Member member, Server server) {
-        Role role = guild.getRoleById(server.getAdminRoleID());
-        return member.getRoles().contains(role) || member.getPermissions().contains(Permission.ADMINISTRATOR);
-    }
 
     public static Message getUpdateMessage(Server server, Long channel, Long messageID) {
         if(channel == null || messageID == null) {
