@@ -8,12 +8,16 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import tech.adelemphii.skynet.Skynet;
 import tech.adelemphii.skynet.discord.BaseCommand;
+import tech.adelemphii.skynet.discord.forumscraper.commands.*;
+import tech.adelemphii.skynet.discord.forumscraper.events.MessageListener;
+import tech.adelemphii.skynet.discord.forumscraper.events.ReadyListener;
 import tech.adelemphii.skynet.discord.forumscraper.utility.data.ServerStorageUtility;
-import tech.adelemphii.skynet.discord.yuh4j.objects.Server;
+import tech.adelemphii.skynet.discord.forumscraper.objects.Server;
 import tech.adelemphii.skynet.utility.data.Configuration;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ForumScraper {
@@ -57,9 +61,15 @@ public class ForumScraper {
     }
 
     private void registerEvents() {
+        api.addEventListener(List.of(new MessageListener(this), new ReadyListener(this)));
     }
 
     private void registerCommands() {
+        commands.put("channel", new CommandChannel());
+        commands.put("config", new CommandConfig());
+        commands.put("credits", new CommandCredits());
+        commands.put("help", new CommandHelp());
+        commands.put("ping", new CommandPing());
     }
 
     public boolean login(String token) {
