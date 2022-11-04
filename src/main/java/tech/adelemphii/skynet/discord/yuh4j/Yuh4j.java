@@ -14,9 +14,9 @@ import tech.adelemphii.skynet.discord.yuh4j.commands.CommandHelp;
 import tech.adelemphii.skynet.discord.yuh4j.events.CommandListener;
 import tech.adelemphii.skynet.discord.yuh4j.events.ReadyListener;
 import tech.adelemphii.skynet.discord.yuh4j.events.ScheduleListener;
-import tech.adelemphii.skynet.objects.Server;
+import tech.adelemphii.skynet.discord.yuh4j.objects.Server;
 import tech.adelemphii.skynet.utility.data.Configuration;
-import tech.adelemphii.skynet.utility.data.ServerConfiguration;
+import tech.adelemphii.skynet.discord.yuh4j.utility.data.ServerConfiguration;
 
 import java.io.File;
 import java.util.HashMap;

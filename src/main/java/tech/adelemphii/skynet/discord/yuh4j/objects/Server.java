@@ -1,4 +1,4 @@
-package tech.adelemphii.skynet.objects;
+package tech.adelemphii.skynet.discord.yuh4j.objects;
 
 import org.jetbrains.annotations.Nullable;
 

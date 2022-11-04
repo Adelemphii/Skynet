@@ -1,8 +1,8 @@
-package tech.adelemphii.skynet.utility.data;
+package tech.adelemphii.skynet.discord.yuh4j.utility.data;
 
 import com.google.gson.Gson;
 import tech.adelemphii.skynet.Skynet;
-import tech.adelemphii.skynet.objects.Server;
+import tech.adelemphii.skynet.discord.yuh4j.objects.Server;
 
 import java.io.*;
 import java.util.HashMap;

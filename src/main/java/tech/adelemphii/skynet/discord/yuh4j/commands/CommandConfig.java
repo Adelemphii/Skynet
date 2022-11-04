@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import tech.adelemphii.skynet.discord.BaseCommand;
 import tech.adelemphii.skynet.discord.yuh4j.Yuh4j;
 import tech.adelemphii.skynet.discord.yuh4j.utility.Yuh4jMessageUtility;
-import tech.adelemphii.skynet.objects.Server;
+import tech.adelemphii.skynet.discord.yuh4j.objects.Server;
 import tech.adelemphii.skynet.utility.GeneralUtility;
 
 import java.util.Arrays;

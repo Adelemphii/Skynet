@@ -11,7 +11,7 @@ import tech.adelemphii.skynet.Skynet;
 import tech.adelemphii.skynet.discord.BaseCommand;
 import tech.adelemphii.skynet.discord.yuh4j.Yuh4j;
 import tech.adelemphii.skynet.objects.Cooldown;
-import tech.adelemphii.skynet.objects.Server;
+import tech.adelemphii.skynet.discord.yuh4j.objects.Server;
 import tech.adelemphii.skynet.utility.GeneralUtility;
 
 import java.util.ArrayList;

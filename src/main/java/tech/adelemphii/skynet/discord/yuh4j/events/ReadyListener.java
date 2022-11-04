@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import tech.adelemphii.skynet.discord.yuh4j.Yuh4j;
 import tech.adelemphii.skynet.discord.yuh4j.utility.Mission;
 import tech.adelemphii.skynet.discord.yuh4j.utility.Yuh4jMessageUtility;
-import tech.adelemphii.skynet.objects.Server;
+import tech.adelemphii.skynet.discord.yuh4j.objects.Server;
 
 import java.util.ArrayList;
 import java.util.List;
