@@ -1,6 +1,7 @@
 package tech.adelemphii.skynet;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import tech.adelemphii.skynet.discord.forumscraper.ForumScraper;
 import tech.adelemphii.skynet.discord.yuh4j.Yuh4j;
 
 public final class Skynet extends JavaPlugin {
@@ -9,17 +10,20 @@ public final class Skynet extends JavaPlugin {
 
     // discord bots
     private Yuh4j yuh4j;
+    private ForumScraper forumScraper;
 
     @Override
     public void onEnable() {
         INSTANCE = this;
 
         this.yuh4j = new Yuh4j(this);
+        this.forumScraper = new ForumScraper(this);
     }
 
     @Override
     public void onDisable() {
         yuh4j.stop(false);
+        forumScraper.stop(false);
     }
 
     public static Skynet getInstance() {
@@ -28,5 +32,9 @@ public final class Skynet extends JavaPlugin {
 
     public Yuh4j getYuh4j() {
         return yuh4j;
+    }
+
+    public ForumScraper getForumScraper() {
+        return forumScraper;
     }
 }
