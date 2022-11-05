@@ -51,6 +51,11 @@ public class CommandListener implements EventListener {
                 discordBot.getServerConfiguration().addServer(server);
             }
 
+            Member member = event.getMember();
+            if(member == null) {
+                return;
+            }
+
             String prefix = server.getPrefix();
             if(message.getContentRaw().startsWith(prefix)) {
                 if(!event.isFromGuild() || event.isWebhookMessage()) {
@@ -58,8 +63,11 @@ public class CommandListener implements EventListener {
                     return;
                 }
 
-                if(server.getCommandChannelID() != event.getChannel().getIdLong()) {
+
+                if(server.getCommandChannelID() != 0 && server.getCommandChannelID() != event.getChannel().getIdLong()
+                        && !GeneralUtility.isAdmin(guild, member, server.getAdminRoleID())) {
                     event.getMessage().reply("I can only accept commands from <#" + server.getCommandChannelID() + ">").queue();
+                    return;
                 }
 
                 String[] split = message.getContentRaw().split(" ");
@@ -70,12 +78,6 @@ public class CommandListener implements EventListener {
                 command = command.replace(prefix, "");
 
                 BaseCommand baseCommand = discordBot.getCommands().get(command);
-
-                Member member = event.getMember();
-
-                if(member == null) {
-                    return;
-                }
 
                 ArrayList<Cooldown> toRemove = new ArrayList<>();
                 if(!cooldowns.isEmpty()) {
