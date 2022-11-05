@@ -1,40 +1,31 @@
 package tech.adelemphii.skynet;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import tech.adelemphii.skynet.discord.forumscraper.ForumScraper;
-import tech.adelemphii.skynet.discord.yuh4j.Yuh4j;
+import tech.adelemphii.skynet.discord.DiscordBot;
 
 public final class Skynet extends JavaPlugin {
 
     private static Skynet INSTANCE;
 
-    // discord bots
-    private Yuh4j yuh4j;
-    private ForumScraper forumScraper;
+    private DiscordBot discordBot;
 
     @Override
     public void onEnable() {
         INSTANCE = this;
 
-        this.yuh4j = new Yuh4j(this);
-        this.forumScraper = new ForumScraper(this);
+        this.discordBot = new DiscordBot(this);
     }
 
     @Override
     public void onDisable() {
-        yuh4j.stop(false);
-        forumScraper.stop(false);
+        discordBot.stop(false);
     }
 
     public static Skynet getInstance() {
         return INSTANCE;
     }
 
-    public Yuh4j getYuh4j() {
-        return yuh4j;
-    }
-
-    public ForumScraper getForumScraper() {
-        return forumScraper;
+    public DiscordBot getDiscordBot() {
+        return discordBot;
     }
 }

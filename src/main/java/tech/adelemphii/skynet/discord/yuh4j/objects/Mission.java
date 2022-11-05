@@ -1,4 +1,4 @@
-package tech.adelemphii.skynet.discord.yuh4j.utility;
+package tech.adelemphii.skynet.discord.yuh4j.objects;
 
 import net.dv8tion.jda.api.entities.Message;
 

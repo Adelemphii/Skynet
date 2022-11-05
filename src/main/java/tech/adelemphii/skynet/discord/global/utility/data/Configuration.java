@@ -1,4 +1,4 @@
-package tech.adelemphii.skynet.utility.data;
+package tech.adelemphii.skynet.discord.global.utility.data;
 
 import org.bukkit.Bukkit;
 import tech.adelemphii.skynet.Skynet;
@@ -11,7 +11,6 @@ public class Configuration {
 
     private final Skynet plugin;
     private String discordBotToken;
-    private String prefix = "!";
 
     public Configuration(File configurationFile) {
         this.plugin = Skynet.getInstance();
@@ -49,8 +48,6 @@ public class Configuration {
                     String value = splitLine[1];
                     if(key.equalsIgnoreCase("discordBotToken")) {
                         discordBotToken = value;
-                    } else if(key.equals("commandPrefix")) {
-                        prefix = value;
                     }
                 }
             }
@@ -79,7 +76,7 @@ public class Configuration {
     }
 
     private Map<String, ?> createConfig() {
-        return Map.of("discordBotToken", "YOUR_TOKEN_HERE", "prefix", prefix);
+        return Map.of("discordBotToken", "YOUR_TOKEN_HERE");
     }
 
     public String getDiscordBotToken() {
@@ -90,19 +87,10 @@ public class Configuration {
         this.discordBotToken = discordBotToken;
     }
 
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
     @Override
     public String toString() {
         return "Configuration{" +
                 "discordBotToken='" + discordBotToken + '\'' +
-                ", prefix='" + prefix + '\'' +
                 '}';
     }
 }

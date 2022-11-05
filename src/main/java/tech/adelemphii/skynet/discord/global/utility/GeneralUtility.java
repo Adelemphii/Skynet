@@ -1,4 +1,4 @@
-package tech.adelemphii.skynet.utility;
+package tech.adelemphii.skynet.discord.global.utility;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;

@@ -1,49 +1,30 @@
 package tech.adelemphii.skynet.discord.forumscraper.objects;
 
-import org.jetbrains.annotations.Nullable;
+public class ForumScraperServer {
 
-public class Server {
+    private long popularTopicsChannel;
+    private long latestTopicsChannel;
+    private long statusUpdatesChannel;
+    private long pingUpdateChannel;
 
-    private final long serverID;
-    private Long popularTopicsChannel;
-    private Long latestTopicsChannel;
-    private Long statusUpdatesChannel;
-    private Long pingUpdateChannel;
+    private long popularTopicMessage;
+    private long latestTopicsMessage;
+    private long statusUpdatesMessage;
+    private long pingUpdateMessage;
+    private boolean enabled;
 
-    private Long popularTopicMessage;
-    private Long latestTopicsMessage;
-    private Long statusUpdatesMessage;
-    private Long pingUpdateMessage;
-
-    // per-server config
-    private String commandPrefix = "!";
-    private long adminRoleID = 0;
-    private long commandsChannelID = 0;
-
-    public Server(long serverID, @Nullable Long popularTopicsChannel, @Nullable Long latestTopicsChannel, @Nullable Long statusUpdatesChannel,
-                  @Nullable Long popularTopicMessage, @Nullable Long latestTopicsMessage, @Nullable Long statusUpdatesMessage) {
-        this.serverID = serverID;
+    public ForumScraperServer(long popularTopicsChannel, long latestTopicsChannel, long statusUpdatesChannel,
+                              long popularTopicMessage, long latestTopicsMessage, long statusUpdatesMessage, boolean enabled) {
         this.popularTopicsChannel = popularTopicsChannel;
         this.latestTopicsChannel = latestTopicsChannel;
         this.statusUpdatesChannel = statusUpdatesChannel;
         this.popularTopicMessage = popularTopicMessage;
         this.latestTopicsMessage = latestTopicsMessage;
         this.statusUpdatesMessage = statusUpdatesMessage;
+        this.enabled = enabled;
     }
 
-    public String getCommandPrefix() {
-        return commandPrefix;
-    }
-
-    public void setCommandPrefix(String commandPrefix) {
-        this.commandPrefix = commandPrefix;
-    }
-
-    public long getServerID() {
-        return serverID;
-    }
-
-    public Long getPopularTopicsChannel() {
+    public long getPopularTopicsChannel() {
         return popularTopicsChannel;
     }
 
@@ -91,22 +72,6 @@ public class Server {
         this.statusUpdatesMessage = statusUpdatesMessage;
     }
 
-    public long getAdminRoleID() {
-        return adminRoleID;
-    }
-
-    public void setAdminRoleID(long adminRoleID) {
-        this.adminRoleID = adminRoleID;
-    }
-
-    public long getCommandsChannelID() {
-        return commandsChannelID;
-    }
-
-    public void setCommandsChannelID(long commandsChannelID) {
-        this.commandsChannelID = commandsChannelID;
-    }
-
     public Long getPingUpdateChannel() {
         return pingUpdateChannel;
     }
@@ -123,11 +88,18 @@ public class Server {
         this.pingUpdateMessage = pingUpdateMessage;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public String toString() {
-        return "Server{" +
-                "serverID=" + serverID +
-                ", popularTopicsChannel=" + popularTopicsChannel +
+        return "ForumScraperServer{" +
+                "popularTopicsChannel=" + popularTopicsChannel +
                 ", latestTopicsChannel=" + latestTopicsChannel +
                 ", statusUpdatesChannel=" + statusUpdatesChannel +
                 ", pingUpdateChannel=" + pingUpdateChannel +
@@ -135,9 +107,7 @@ public class Server {
                 ", latestTopicsMessage=" + latestTopicsMessage +
                 ", statusUpdatesMessage=" + statusUpdatesMessage +
                 ", pingUpdateMessage=" + pingUpdateMessage +
-                ", commandPrefix='" + commandPrefix + '\'' +
-                ", adminRoleID=" + adminRoleID +
-                ", commandsChannelID=" + commandsChannelID +
+                ", enabled=" + enabled +
                 '}';
     }
 }

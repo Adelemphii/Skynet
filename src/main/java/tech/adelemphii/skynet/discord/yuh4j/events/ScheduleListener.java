@@ -9,15 +9,15 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import org.jetbrains.annotations.NotNull;
-import tech.adelemphii.skynet.discord.yuh4j.Yuh4j;
+import tech.adelemphii.skynet.discord.DiscordBot;
 import tech.adelemphii.skynet.discord.yuh4j.utility.Yuh4jMessageUtility;
-import tech.adelemphii.skynet.discord.yuh4j.objects.Server;
+import tech.adelemphii.skynet.discord.global.objects.Server;
 
 public class ScheduleListener implements EventListener {
 
-    private final Yuh4j discordBot;
+    private final DiscordBot discordBot;
 
-    public ScheduleListener(Yuh4j discordBot) {
+    public ScheduleListener(DiscordBot discordBot) {
         this.discordBot = discordBot;
     }
 
@@ -30,7 +30,7 @@ public class ScheduleListener implements EventListener {
             Message message = event.getMessage();
 
             if(event.getChannelType() == ChannelType.TEXT) {
-                if(event.getChannel().asTextChannel().getIdLong() == server.getScheduleChannel()) {
+                if(event.getChannel().asTextChannel().getIdLong() == server.getYuh4jServer().getScheduleChannel()) {
                     String error = Yuh4jMessageUtility.sendMessage(guild, discordBot);
                     if(error != null) {
                         message.reply("Error: " + error).queue();
@@ -38,6 +38,7 @@ public class ScheduleListener implements EventListener {
                 }
             }
         }
+
         if(genericEvent instanceof MessageUpdateEvent) {
             MessageUpdateEvent event = (MessageUpdateEvent) genericEvent;
             Guild guild = event.getGuild();
@@ -45,7 +46,7 @@ public class ScheduleListener implements EventListener {
             Message message = event.getMessage();
 
             if(event.getChannelType() == ChannelType.TEXT) {
-                if(event.getChannel().asTextChannel().getIdLong() == server.getScheduleChannel()) {
+                if(event.getChannel().asTextChannel().getIdLong() == server.getYuh4jServer().getScheduleChannel()) {
                     String error = Yuh4jMessageUtility.sendMessage(guild, discordBot);
                     if(error != null) {
                         message.reply("Error: " + error).queue();
@@ -60,10 +61,10 @@ public class ScheduleListener implements EventListener {
             Server server = discordBot.getServerConfiguration().getServer(guild.getIdLong());
 
             if(event.getChannelType() == ChannelType.TEXT) {
-                if(event.getChannel().asTextChannel().getIdLong() == server.getScheduleChannel()) {
+                if(event.getChannel().asTextChannel().getIdLong() == server.getYuh4jServer().getScheduleChannel()) {
                     String error = Yuh4jMessageUtility.sendMessage(guild, discordBot);
                     if(error != null) {
-                        discordBot.getPlugin().getLogger().severe("[Yuh4j] Error:" + error);
+                        discordBot.getPlugin().getLogger().severe("[DiscordBot] Error:" + error);
                     }
                 }
             }

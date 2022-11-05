@@ -11,25 +11,23 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.io.FileUtils;
 import tech.adelemphii.skynet.Skynet;
-import tech.adelemphii.skynet.discord.forumscraper.ForumScraper;
-import tech.adelemphii.skynet.discord.forumscraper.objects.Server;
+import tech.adelemphii.skynet.discord.global.objects.Server;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
 
-public class GeneralUtility {
+public class FSGeneralUtility {
 
     public static Message getUpdateMessage(Server server, Long channel, Long messageID) {
         if(channel == null || messageID == null) {
             return null;
         }
 
-        JDA jda = Skynet.getInstance().getForumScraper().getApi();
+        JDA jda = Skynet.getInstance().getDiscordBot().getApi();
         if(jda.isUnavailable(server.getServerID())) {
             return null;
         }
@@ -95,25 +93,20 @@ public class GeneralUtility {
 
     public static File saveImageToCache(byte[] decodedBytes, String name) {
         try {
-            File output = new File(ForumScraper.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+            File output = Skynet.getInstance().getDataFolder().getParentFile();
             output = new File(output.getAbsolutePath() + "/files/cache/" + name + ".png");
             FileUtils.writeByteArrayToFile(output, decodedBytes);
             return output;
-        } catch(URISyntaxException | IOException e) {
+        } catch(IOException e) {
             e.printStackTrace();
             return null;
         }
     }
 
     public static File getFileFromCache(String fileName) {
-        try {
-            File output = new File(ForumScraper.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
-            output = new File(output.getAbsolutePath() + "/files/cache/" + fileName + ".png");
-            return output;
-        } catch(URISyntaxException e) {
-            e.printStackTrace();
-            return null;
-        }
+        File output = Skynet.getInstance().getDataFolder().getParentFile();
+        output = new File(output.getAbsolutePath() + "/files/cache/" + fileName + ".png");
+        return output;
     }
 
     public static File decodeToFile(String base64String, String name) {

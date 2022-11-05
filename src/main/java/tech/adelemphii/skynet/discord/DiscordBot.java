@@ -1,4 +1,4 @@
-package tech.adelemphii.skynet.discord.forumscraper;
+package tech.adelemphii.skynet.discord;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -7,20 +7,22 @@ import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import tech.adelemphii.skynet.Skynet;
-import tech.adelemphii.skynet.discord.BaseCommand;
-import tech.adelemphii.skynet.discord.forumscraper.commands.*;
-import tech.adelemphii.skynet.discord.forumscraper.events.MessageListener;
-import tech.adelemphii.skynet.discord.forumscraper.events.ReadyListener;
-import tech.adelemphii.skynet.discord.forumscraper.utility.data.ServerStorageUtility;
-import tech.adelemphii.skynet.discord.forumscraper.objects.Server;
-import tech.adelemphii.skynet.utility.data.Configuration;
+import tech.adelemphii.skynet.discord.forumscraper.commands.FSChannel;
+import tech.adelemphii.skynet.discord.forumscraper.commands.FSConfig;
+import tech.adelemphii.skynet.discord.global.commands.*;
+import tech.adelemphii.skynet.discord.global.events.CommandListener;
+import tech.adelemphii.skynet.discord.global.events.ReadyListener;
+import tech.adelemphii.skynet.discord.global.objects.Server;
+import tech.adelemphii.skynet.discord.global.utility.data.Configuration;
+import tech.adelemphii.skynet.discord.yuh4j.commands.Yuh4jCommandChannel;
+import tech.adelemphii.skynet.discord.yuh4j.commands.Yuh4jCommandConfig;
+import tech.adelemphii.skynet.discord.global.utility.data.ServerConfiguration;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class ForumScraper {
+public class DiscordBot {
 
     private JDA api;
     private final Map<String, BaseCommand> commands = new HashMap<>();
@@ -28,48 +30,66 @@ public class ForumScraper {
 
     private final Skynet plugin;
     private final Configuration configuration;
-    private final ServerStorageUtility serverStorageUtility;
+    private final ServerConfiguration serverConfiguration;
 
-    public ForumScraper(Skynet plugin) {
+    public DiscordBot(Skynet plugin) {
+
         this.plugin = plugin;
-        this.serverStorageUtility = new ServerStorageUtility("forumscraper");
-        this.serverStorageUtility.loadServers();
+        this.serverConfiguration = new ServerConfiguration("skynet");
+        this.serverConfiguration.loadServers();
 
         File file;
         file = new File(plugin.getDataFolder().getAbsolutePath());
-        file = new File(file.getPath() + "/configs/forumscraper.yml");
+        file = new File(file.getPath() + "/configs/skynet.yml");
         this.configuration = new Configuration(file);
 
         if(login(configuration.getDiscordBotToken())) {
-            plugin.getLogger().info("ForumScraper: " + "Successfully logged in.");
+            plugin.getLogger().info("Successfully logged in.");
         } else {
-            plugin.getLogger().severe("ForumScraper: " + "An error has occurred while attempting to log in.");
+            plugin.getLogger().severe("An error has occurred while attempting to log in.");
             return;
         }
         registerEvents();
         registerCommands();
-        api.getPresence().setActivity(Activity.playing("ForumScraper by Adelemphii"));
+        api.getPresence().setActivity(Activity.playing("Skynet by Adelemphii"));
+
     }
 
     public void stop(boolean now) {
+        if(api == null) {
+            return;
+        }
         if(now) {
             api.shutdownNow();
         } else {
             api.shutdown();
         }
-        serverStorageUtility.saveServers();
+        serverConfiguration.saveServers();
     }
 
     private void registerEvents() {
-        api.addEventListener(List.of(new MessageListener(this), new ReadyListener(this)));
+        // global events
+        api.addEventListener(new CommandListener(this));
+        api.addEventListener(new ReadyListener(this));
+
+        // yuh4j events
+        //api.addEventListener(new ScheduleListener(this)); --TODO: Doesn't work properly
     }
 
     private void registerCommands() {
-        commands.put("channel", new CommandChannel());
-        commands.put("config", new CommandConfig());
-        commands.put("credits", new CommandCredits());
-        commands.put("help", new CommandHelp());
-        commands.put("ping", new CommandPing());
+        // global commands
+        commands.put("module", new GlobalModule());
+        commands.put("help", new GlobalHelp(this));
+        commands.put("credits", new GlobalCredits());
+        commands.put("config", new GlobalConfig());
+
+        // yuh4j commands
+        commands.put("y4jchannel", new Yuh4jCommandChannel(this));
+        commands.put("y4jconfig", new Yuh4jCommandConfig(this));
+
+        // forumscraper commands
+        commands.put("fschannel", new FSChannel());
+        commands.put("fsconfig", new FSConfig());
     }
 
     public boolean login(String token) {
@@ -99,8 +119,8 @@ public class ForumScraper {
         return configuration;
     }
 
-    public ServerStorageUtility getServerStorageUtility() {
-        return serverStorageUtility;
+    public ServerConfiguration getServerConfiguration() {
+        return serverConfiguration;
     }
 
     public Map<Server, Runnable> getUpdateRunnables() {

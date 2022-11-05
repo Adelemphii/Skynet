@@ -7,8 +7,10 @@ import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.requests.restaction.pagination.ReactionPaginationAction;
 import org.apache.commons.lang.StringUtils;
-import tech.adelemphii.skynet.discord.yuh4j.Yuh4j;
-import tech.adelemphii.skynet.discord.yuh4j.objects.Server;
+import tech.adelemphii.skynet.discord.DiscordBot;
+import tech.adelemphii.skynet.discord.yuh4j.objects.Mission;
+import tech.adelemphii.skynet.discord.yuh4j.objects.Yuh4jServer;
+import tech.adelemphii.skynet.discord.global.objects.Server;
 
 import java.awt.*;
 import java.util.List;
@@ -19,11 +21,13 @@ import java.util.regex.Pattern;
 
 public class Yuh4jMessageUtility {
 
-    public static String sendMessage(Guild guild, Yuh4j discordBot) {
+    public static String sendMessage(Guild guild, DiscordBot discordBot) {
         Server server = discordBot.getServerConfiguration().getServer(guild.getIdLong());
+
         if(server == null) {
             return "SERVER IS NULL";
         }
+        Yuh4jServer yuh4jServer = server.getYuh4jServer();
 
         ArrayList<Mission> messageList = scrapeMessages(guild, server);
 
@@ -32,21 +36,27 @@ public class Yuh4jMessageUtility {
             return checks;
         }
 
-        TextChannel channel = guild.getTextChannelById(server.getTimeline());
+        TextChannel channel = guild.getTextChannelById(yuh4jServer.getTimeline());
 
         assert messageList != null;
         MessageEmbed embedList = createEmbed(messageList);
 
         assert channel != null;
-        if(server.getTimelineMessage() == 0) {
-            channel.sendMessageEmbeds(embedList).queue(message -> server.setTimelineMessage(message.getIdLong()));
+        if(yuh4jServer.getTimelineMessage() == 0) {
+            channel.sendMessageEmbeds(embedList).queue(message -> {
+                yuh4jServer.setTimelineMessage(message.getIdLong());
+                server.setYuh4jServer(yuh4jServer);
+            });
             discordBot.getServerConfiguration().addServer(server);
         } else {
-            channel.retrieveMessageById(server.getTimelineMessage())
+            channel.retrieveMessageById(yuh4jServer.getTimelineMessage())
                     .queue(topicMessage -> topicMessage.editMessageEmbeds(embedList).queue(),
                             new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
                                 channel.sendMessageEmbeds(embedList).queue(message
-                                        -> server.setTimelineMessage(message.getIdLong()));
+                                        -> {
+                                    yuh4jServer.setTimelineMessage(message.getIdLong());
+                                    server.setYuh4jServer(yuh4jServer);
+                                });
                                 discordBot.getServerConfiguration().addServer(server);
                             })
                     );
@@ -54,7 +64,7 @@ public class Yuh4jMessageUtility {
         return null;
     }
 
-    public static String sendBreadPings(Guild guild, Yuh4j discordBot, MessageEmbed embed, ArrayList<Mission> missions,
+    public static String sendBreadPings(Guild guild, DiscordBot discordBot, MessageEmbed embed, ArrayList<Mission> missions,
                                         String text, long delay) {
         Server server = discordBot.getServerConfiguration().getServer(guild.getIdLong());
 
@@ -63,7 +73,7 @@ public class Yuh4jMessageUtility {
             return checks;
         }
 
-        TextChannel channel = guild.getTextChannelById(server.getTimeline());
+        TextChannel channel = guild.getTextChannelById(server.getYuh4jServer().getTimeline());
         assert channel != null;
         channel.sendMessage(text).addEmbeds(embed).queue(message -> message.delete().queueAfter(delay, TimeUnit.MINUTES));
         return null;
@@ -74,7 +84,7 @@ public class Yuh4jMessageUtility {
             return "SERVER IS NULL";
         }
 
-        TextChannel channel = guild.getTextChannelById(server.getTimeline());
+        TextChannel channel = guild.getTextChannelById(server.getYuh4jServer().getTimeline());
         if(channel == null) {
             return "TIMELINE CHANNEL NOT SPECIFIED";
         }
@@ -91,7 +101,7 @@ public class Yuh4jMessageUtility {
         }
         ArrayList<Mission> missions = new ArrayList<>();
 
-        TextChannel textChannel = guild.getTextChannelById(server.getScheduleChannel());
+        TextChannel textChannel = guild.getTextChannelById(server.getYuh4jServer().getScheduleChannel());
         if(textChannel == null) {
             return null;
         }

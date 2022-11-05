@@ -1,22 +1,21 @@
-package tech.adelemphii.skynet.discord.yuh4j.commands;
+package tech.adelemphii.skynet.discord.global.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import tech.adelemphii.skynet.discord.BaseCommand;
-import tech.adelemphii.skynet.discord.yuh4j.Yuh4j;
+import tech.adelemphii.skynet.discord.DiscordBot;
+import tech.adelemphii.skynet.discord.global.enums.CommandType;
+import tech.adelemphii.skynet.discord.global.objects.Server;
 import tech.adelemphii.skynet.discord.yuh4j.utility.Yuh4jMessageUtility;
-import tech.adelemphii.skynet.discord.yuh4j.objects.Server;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class CommandHelp implements BaseCommand {
+public class GlobalHelp implements BaseCommand {
 
     private Server server;
-    private final Yuh4j discordBot;
+    private final DiscordBot discordBot;
 
-    public CommandHelp(Yuh4j discordBot) {
+    public GlobalHelp(DiscordBot discordBot) {
         this.discordBot = discordBot;
     }
 
@@ -47,23 +46,31 @@ public class CommandHelp implements BaseCommand {
 
         String commandPrefix = server.getPrefix();
 
-        builder.setTitle("__Bot Commands__");
+        builder.setTitle("__Skynet Commands__");
 
         Map<String, BaseCommand> commands = discordBot.getCommands();
+        SortedSet<String> keys = new TreeSet<>(commands.keySet());
+        List<BaseCommand> commandsSorted = new ArrayList<>();
+        for(String key : keys) {
+            commandsSorted.add(commands.get(key));
+        }
 
         StringBuilder sb = new StringBuilder();
-        for(BaseCommand baseCommand : commands.values()) {
-            sb.append("» **").append(commandPrefix).append(baseCommand.name()).append("**");
-
+        for(BaseCommand baseCommand : commandsSorted) {
             List<String> subCommands = baseCommand.subCommands();
+            sb.append("\n» **").append(commandPrefix).append(baseCommand.name()).append("**");
+            if(subCommands == null || subCommands.isEmpty()) {
+                sb.append("\n");
+            }
+
 
             if(subCommands != null && !subCommands.isEmpty()) {
                 for(String string : subCommands) {
                     sb.append("\n» **").append(commandPrefix).append(baseCommand.name()).append(" ").append(string).append("**");
                 }
-                continue;
+
+                sb.append("\n");
             }
-            sb.append("\n");
         }
 
         builder.setDescription(sb);
@@ -71,5 +78,10 @@ public class CommandHelp implements BaseCommand {
         builder.setColor(Yuh4jMessageUtility.getTheme());
 
         return builder.build();
+    }
+
+    @Override
+    public CommandType getCommanedType() {
+        return CommandType.GLOBAL;
     }
 }

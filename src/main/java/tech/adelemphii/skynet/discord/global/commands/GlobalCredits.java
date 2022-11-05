@@ -1,14 +1,14 @@
-package tech.adelemphii.skynet.discord.forumscraper.commands;
+package tech.adelemphii.skynet.discord.global.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import tech.adelemphii.skynet.discord.BaseCommand;
+import tech.adelemphii.skynet.discord.global.enums.CommandType;
 
 import java.awt.*;
 import java.util.List;
 
-public class CommandCredits implements BaseCommand {
+public class GlobalCredits implements BaseCommand {
 
     @Override
     public void execute(MessageReceivedEvent event) {
@@ -38,10 +38,15 @@ public class CommandCredits implements BaseCommand {
         builder.addField("*Created By*", "The bot was created by <@844957548134006806>", false);
         builder.addField("Portfolio", "Find Adelemphii's Portfolio @ https://www.adelemphii.tech/", false);
         builder.addField("Twitch", "Follow my Twitch @ https://www.twitch.tv/Adelemphii/", false);
-        builder.addField("Requests/Suggetions", "Please send all feedback to: https://forms.gle/JXmJewmbLru8u8Mc7", false);
+        builder.addField("Requests/Suggetions", "Please send all feedback and bug reports to: https://github.com/Adelemphii/Skynet/issues", false);
 
         builder.setColor(Color.PINK);
 
         return builder.build();
+    }
+
+    @Override
+    public CommandType getCommanedType() {
+        return CommandType.GLOBAL;
     }
 }

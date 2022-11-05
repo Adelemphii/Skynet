@@ -4,20 +4,22 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import tech.adelemphii.skynet.discord.BaseCommand;
-import tech.adelemphii.skynet.discord.yuh4j.Yuh4j;
+import tech.adelemphii.skynet.discord.global.commands.BaseCommand;
+import tech.adelemphii.skynet.discord.DiscordBot;
+import tech.adelemphii.skynet.discord.global.enums.CommandType;
+import tech.adelemphii.skynet.discord.yuh4j.objects.Yuh4jServer;
 import tech.adelemphii.skynet.discord.yuh4j.utility.Yuh4jMessageUtility;
-import tech.adelemphii.skynet.discord.yuh4j.objects.Server;
-import tech.adelemphii.skynet.utility.GeneralUtility;
+import tech.adelemphii.skynet.discord.global.objects.Server;
+import tech.adelemphii.skynet.discord.global.utility.GeneralUtility;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class CommandChannel implements BaseCommand {
+public class Yuh4jCommandChannel implements BaseCommand {
 
-    private final Yuh4j discordBot;
+    private final DiscordBot discordBot;
 
-    public CommandChannel(Yuh4j discordBot) {
+    public Yuh4jCommandChannel(DiscordBot discordBot) {
         this.discordBot = discordBot;
     }
 
@@ -69,15 +71,15 @@ public class CommandChannel implements BaseCommand {
         EmbedBuilder builder = new EmbedBuilder();
 
         builder.setTitle("Channel Command Args");
-        builder.setDescription(server.getPrefix() + "channel <command> <type> <id>");
+        builder.setDescription(server.getPrefix() + name() + " <command> <type> <id>");
 
         builder.addField("Argument 1", "Valid Subcommands: set, saveconfig, update, help", false);
         builder.addField("Argument 2", "Valid types: schedule_channel, timeline_channel", false);
         builder.addField("Argument 3", "Channel ID, such as 819699195681832991", false);
 
         builder.setColor(Yuh4jMessageUtility.getTheme());
-        message.reply("Examples: " + server.getPrefix() + "channel set schedule_channel 819699195681832991 or " +
-                server.getPrefix() + "channel update").setEmbeds(builder.build()).queue();
+        message.reply("Examples: " + server.getPrefix() + name() + " set schedule_channel 819699195681832991 or " +
+                server.getPrefix() + name() + " update").setEmbeds(builder.build()).queue();
     }
 
     private void saveConfig() {
@@ -92,12 +94,15 @@ public class CommandChannel implements BaseCommand {
     }
 
     private boolean set(String[] args, Server server) {
+        Yuh4jServer yuh4jServer = server.getYuh4jServer();
         switch (args[1].toUpperCase()) {
             case "SCHEDULE_CHANNEL":
-                server.setScheduleChannel(Long.parseLong(args[2]));
+                yuh4jServer.setScheduleChannel(Long.parseLong(args[2]));
+                server.setYuh4jServer(yuh4jServer);
                 return true;
             case "TIMELINE_CHANNEL":
-                server.setTimeline(Long.parseLong(args[2]));
+                yuh4jServer.setTimeline(Long.parseLong(args[2]));
+                server.setYuh4jServer(yuh4jServer);
                 return true;
             default:
                 return false;
@@ -111,11 +116,16 @@ public class CommandChannel implements BaseCommand {
 
     @Override
     public String name() {
-        return "channel";
+        return "y4jchannel";
     }
 
     @Override
     public List<String> subCommands() {
         return Arrays.asList("set", "saveconfig", "update", "help");
+    }
+
+    @Override
+    public CommandType getCommanedType() {
+        return CommandType.YUH4J;
     }
 }

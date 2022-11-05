@@ -1,4 +1,4 @@
-package tech.adelemphii.skynet.objects;
+package tech.adelemphii.skynet.discord.global.objects;
 
 import net.dv8tion.jda.api.entities.Member;
 

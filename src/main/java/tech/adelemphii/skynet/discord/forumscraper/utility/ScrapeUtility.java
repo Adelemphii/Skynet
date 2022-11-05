@@ -17,10 +17,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import tech.adelemphii.skynet.Skynet;
 import tech.adelemphii.skynet.discord.forumscraper.objects.Author;
-import tech.adelemphii.skynet.discord.forumscraper.objects.Server;
+import tech.adelemphii.skynet.discord.forumscraper.objects.ForumScraperServer;
 import tech.adelemphii.skynet.discord.forumscraper.objects.Topic;
 import tech.adelemphii.skynet.discord.forumscraper.objects.TopicType;
-import tech.adelemphii.skynet.discord.forumscraper.utility.data.ServerStorageUtility;
+import tech.adelemphii.skynet.discord.global.utility.data.ServerConfiguration;
+import tech.adelemphii.skynet.discord.global.objects.Server;
 
 import java.awt.*;
 import java.io.File;
@@ -28,9 +29,9 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.List;
 
 public class ScrapeUtility {
 
@@ -72,12 +73,16 @@ public class ScrapeUtility {
         return builder.build();
     }
 
-    private static String doChecks(Server server, Guild guild, ArrayList<Topic> topicList) {
-        if(server == null) {
+    private static String doChecks(ForumScraperServer forumScraperServer, Guild guild, ArrayList<Topic> topicList) {
+        if(guild == null) {
+            return "GUILD IS NULL";
+        }
+
+        if(forumScraperServer == null) {
             return "SERVER IS NULL";
         }
 
-        TextChannel channel = guild.getTextChannelById(server.getPopularTopicsChannel());
+        TextChannel channel = guild.getTextChannelById(forumScraperServer.getPopularTopicsChannel());
         if(channel == null) {
             return "POPULAR TOPICS CHANNEL NOT SELECTED";
         }
@@ -88,12 +93,12 @@ public class ScrapeUtility {
         return null;
     }
 
-    private static String doChecks(Server server, Guild guild) {
-        if(server == null) {
+    private static String doChecks(ForumScraperServer forumScraperServer, Guild guild) {
+        if(forumScraperServer == null) {
             return "SERVER IS NULL";
         }
 
-        TextChannel channel = guild.getTextChannelById(server.getPingUpdateChannel());
+        TextChannel channel = guild.getTextChannelById(forumScraperServer.getPingUpdateChannel());
         if(channel == null) {
             return "POPULAR TOPICS CHANNEL NOT SELECTED";
         }
@@ -129,33 +134,50 @@ public class ScrapeUtility {
     }
 
     public static String sendPopularTopics(Guild guild) {
-        ServerStorageUtility serverStorageUtility = Skynet.getInstance().getForumScraper().getServerStorageUtility();
-        Server server = serverStorageUtility.getServer(guild.getIdLong());
-        ArrayList<Topic> topicList = scrapeTopics("https://www.lordofthecraft.net/forums/");
+        ServerConfiguration serverConfiguration = Skynet.getInstance().getDiscordBot().getServerConfiguration();
+        Server server = serverConfiguration.getServer(guild.getIdLong());
+        if(server == null) {
+            return "SERVER IS NULL";
+        }
+        ForumScraperServer forumScraperServer = server.getForumScraperServer();
+        if(forumScraperServer == null) {
+            return "FORUM_SCRAPER_SERVER IS NULL";
+        }
 
-        String checks = doChecks(server, guild, topicList);
+        ArrayList<Topic> topicList = scrapeTopics("https://www.lordofthecraft.net/forums/");
+        String checks = doChecks(forumScraperServer, guild, topicList);
 
         if(checks != null) {
             return checks;
         }
 
-        TextChannel channel = guild.getTextChannelById(server.getPopularTopicsChannel());
+        TextChannel channel = guild.getTextChannelById(forumScraperServer.getPopularTopicsChannel());
 
         assert topicList != null;
         topicList = filterTopics(topicList, TopicType.POPULAR_TOPIC);
         ArrayList<MessageEmbed> embedList = filterEmbeds(topicList);
 
+        if(embedList.isEmpty()) {
+            return null;
+        }
+
         assert channel != null;
-        if(server.getPopularTopicMessage() == null) {
-            channel.sendMessageEmbeds(embedList).queue(message -> server.setPopularTopicMessage(message.getIdLong()));
-            serverStorageUtility.addServer(server);
+        if(forumScraperServer.getPopularTopicMessage() == null) {
+            channel.sendMessageEmbeds(embedList).queue(message -> {
+                forumScraperServer.setPopularTopicMessage(message.getIdLong());
+                server.setForumScraperServer(forumScraperServer);
+            });
+            serverConfiguration.addServer(server);
         } else {
-            channel.retrieveMessageById(server.getPopularTopicMessage())
+            channel.retrieveMessageById(forumScraperServer.getPopularTopicMessage())
                     .queue(topicMessage -> topicMessage.editMessageEmbeds(embedList).queue(),
                             new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
                                 channel.sendMessageEmbeds(embedList).queue(message
-                                        -> server.setPopularTopicMessage(message.getIdLong()));
-                                serverStorageUtility.addServer(server);
+                                        -> {
+                                    forumScraperServer.setPopularTopicMessage(message.getIdLong());
+                                    server.setForumScraperServer(forumScraperServer);
+                                });
+                                serverConfiguration.addServer(server);
                             })
                     );
         }
@@ -163,33 +185,46 @@ public class ScrapeUtility {
     }
 
     public static String sendLatestTopics(Guild guild) {
-        ServerStorageUtility serverStorageUtility = Skynet.getInstance().getForumScraper().getServerStorageUtility();
-        Server server = serverStorageUtility.getServer(guild.getIdLong());
-        ArrayList<Topic> topicList = scrapeTopics("https://www.lordofthecraft.net/forums/");
+        ServerConfiguration serverConfiguration = Skynet.getInstance().getDiscordBot().getServerConfiguration();
+        Server server = serverConfiguration.getServer(guild.getIdLong());
+        if(server == null) {
+            return "SERVER IS NULL";
+        }
+        ForumScraperServer forumScraperServer = server.getForumScraperServer();
+        if(forumScraperServer == null) {
+            return "FORUM_SCRAPER_SERVER IS NULL";
+        }
 
-        String checks = doChecks(server, guild, topicList);
+        ArrayList<Topic> topicList = scrapeTopics("https://www.lordofthecraft.net/forums/");
+        String checks = doChecks(forumScraperServer, guild, topicList);
 
         if(checks != null) {
             return checks;
         }
 
-        TextChannel channel = guild.getTextChannelById(server.getLatestTopicsChannel());
+        TextChannel channel = guild.getTextChannelById(forumScraperServer.getLatestTopicsChannel());
 
         assert topicList != null;
         topicList = filterTopics(topicList, TopicType.LATEST_TOPIC);
         ArrayList<MessageEmbed> embedList = filterEmbeds(topicList);
 
         assert channel != null;
-        if(server.getPopularTopicMessage() == null) {
-            channel.sendMessageEmbeds(embedList).queue(message -> server.setLatestTopicsMessage(message.getIdLong()));
-            serverStorageUtility.addServer(server);
+        if(forumScraperServer.getPopularTopicMessage() == null) {
+            channel.sendMessageEmbeds(embedList).queue(message -> {
+                forumScraperServer.setLatestTopicsMessage(message.getIdLong());
+                server.setForumScraperServer(forumScraperServer);
+            });
+            serverConfiguration.addServer(server);
         } else {
-            channel.retrieveMessageById(server.getLatestTopicsMessage())
+            channel.retrieveMessageById(forumScraperServer.getLatestTopicsMessage())
                     .queue(topicMessage -> topicMessage.editMessageEmbeds(embedList).queue(),
                             new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
                                 channel.sendMessageEmbeds(embedList).queue(message
-                                        -> server.setLatestTopicsMessage(message.getIdLong()));
-                                serverStorageUtility.addServer(server);
+                                        -> {
+                                    forumScraperServer.setLatestTopicsMessage(message.getIdLong());
+                                    server.setForumScraperServer(forumScraperServer);
+                                });
+                                serverConfiguration.addServer(server);
                             })
                     );
         }
@@ -197,9 +232,17 @@ public class ScrapeUtility {
     }
 
     public static String sendPingUpdate(Guild guild) {
-        ServerStorageUtility serverStorageUtility = Skynet.getInstance().getForumScraper().getServerStorageUtility();
-        Server server = serverStorageUtility.getServer(guild.getIdLong());
-        String checks = doChecks(server, guild);
+        ServerConfiguration serverConfiguration = Skynet.getInstance().getDiscordBot().getServerConfiguration();
+        Server server = serverConfiguration.getServer(guild.getIdLong());
+        if(server == null) {
+            return "SERVER IS NULL";
+        }
+        ForumScraperServer forumScraperServer = server.getForumScraperServer();
+        if(forumScraperServer == null) {
+            return "FORUM_SCRAPER_SERVER IS NULL";
+        }
+
+        String checks = doChecks(forumScraperServer, guild);
 
         if(checks != null) {
             return checks;
@@ -207,7 +250,7 @@ public class ScrapeUtility {
 
         String name = "lotc";
 
-        Map<String, EmbedBuilder> embed = GeneralUtility.pingServer("mc.lotc.co", name);
+        Map<String, EmbedBuilder> embed = FSGeneralUtility.pingServer("mc.lotc.co", name);
         Optional<String> base64Opt = embed.keySet().stream().findFirst();
         String base64 = "";
         if(base64Opt.isPresent()) {
@@ -215,67 +258,88 @@ public class ScrapeUtility {
         }
 
         EmbedBuilder serverEmbed = embed.get(base64);
-        EmbedBuilder websiteEmbed = GeneralUtility.pingWebsite("https://www.lordofthecraft.net/forums/");
+        EmbedBuilder websiteEmbed = FSGeneralUtility.pingWebsite("https://www.lordofthecraft.net/forums/");
 
-        TextChannel channel = guild.getTextChannelById(server.getPingUpdateChannel());
+        TextChannel channel = guild.getTextChannelById(forumScraperServer.getPingUpdateChannel());
 
         assert channel != null;
-        if(server.getPingUpdateMessage() == null) {
-            File file = GeneralUtility.getFileFromCache(name) != null
-                    ? GeneralUtility.getFileFromCache(name) : GeneralUtility.decodeToFile(base64, name);
-            if(file != null && file.exists()) {
+        if(forumScraperServer.getPingUpdateMessage() == null) {
+            FSGeneralUtility.getFileFromCache(name);
+            File file = FSGeneralUtility.getFileFromCache(name);
+            if(file.exists()) {
                 FileUpload fileUpload = FileUpload.fromData(file, name + ".png");
                 channel.sendFiles(fileUpload).setEmbeds(List.of(serverEmbed.build(), websiteEmbed.build()))
-                        .queue(message -> server.setPingUpdateMessage(message.getIdLong()));
+                        .queue(message -> {
+                            forumScraperServer.setPingUpdateMessage(message.getIdLong());
+                            server.setForumScraperServer(forumScraperServer);
+                        });
             } else {
                 channel.sendMessageEmbeds(List.of(serverEmbed.build(), websiteEmbed.build()))
-                        .queue(message -> server.setPingUpdateMessage(message.getIdLong()));
+                        .queue(message -> {
+                            forumScraperServer.setPingUpdateMessage(message.getIdLong());
+                            server.setForumScraperServer(forumScraperServer);
+                        });
             }
-            serverStorageUtility.addServer(server);
+            serverConfiguration.addServer(server);
         } else {
-            channel.retrieveMessageById(server.getPingUpdateMessage())
+            channel.retrieveMessageById(forumScraperServer.getPingUpdateMessage())
                     .queue(topicMessage ->
                                     topicMessage.editMessageEmbeds(List.of(serverEmbed.setThumbnail(null).build(), websiteEmbed.build()))
                                             .queue(),
                             new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
                                 channel.sendMessageEmbeds(java.util.List.of(serverEmbed.setThumbnail(null).build(), websiteEmbed.build()))
                                         .queue(message
-                                                -> server.setPingUpdateMessage(message.getIdLong()));
-                                serverStorageUtility.addServer(server);
+                                                -> {
+                                            forumScraperServer.setPingUpdateMessage(message.getIdLong());
+                                            server.setForumScraperServer(forumScraperServer);
+                                        });
+                                serverConfiguration.addServer(server);
                             }));
         }
         return null;
     }
 
     public static String sendStatusUpdates(Guild guild) {
-        ServerStorageUtility serverStorageUtility = Skynet.getInstance().getForumScraper().getServerStorageUtility();
-        Server server = serverStorageUtility.getServer(guild.getIdLong());
+        ServerConfiguration serverConfiguration = Skynet.getInstance().getDiscordBot().getServerConfiguration();
+        Server server = serverConfiguration.getServer(guild.getIdLong());
+        if(server == null) {
+            return "SERVER IS NULL";
+        }
+        ForumScraperServer forumScraperServer = server.getForumScraperServer();
+        if(forumScraperServer == null) {
+            return "FORUM_SCRAPER_SERVER IS NULL";
+        }
 
         ArrayList<Topic> topicList = scrapeStatuses("https://www.lordofthecraft.net/forums/");
-
-        String checks = doChecks(server, guild, topicList);
+        String checks = doChecks(forumScraperServer, guild, topicList);
 
         if(checks != null) {
             return checks;
         }
 
-        TextChannel channel = guild.getTextChannelById(server.getStatusUpdatesChannel());
+        TextChannel channel = guild.getTextChannelById(forumScraperServer.getStatusUpdatesChannel());
 
         assert topicList != null;
         topicList = filterTopics(topicList, TopicType.STATUS_UPDATE);
         ArrayList<MessageEmbed> embedList = filterEmbeds(topicList);
 
         assert channel != null;
-        if(server.getStatusUpdatesMessage() == null) {
-            channel.sendMessageEmbeds(embedList).queue(message -> server.setStatusUpdatesMessage(message.getIdLong()));
-            serverStorageUtility.addServer(server);
+        if(forumScraperServer.getStatusUpdatesMessage() == null) {
+            channel.sendMessageEmbeds(embedList).queue(message -> {
+                forumScraperServer.setStatusUpdatesMessage(message.getIdLong());
+                server.setForumScraperServer(forumScraperServer);
+            });
+            serverConfiguration.addServer(server);
         } else {
-            channel.retrieveMessageById(server.getStatusUpdatesMessage())
+            channel.retrieveMessageById(forumScraperServer.getStatusUpdatesMessage())
                     .queue(topicMessage -> topicMessage.editMessageEmbeds(embedList).queue(),
                             new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
                                 channel.sendMessageEmbeds(embedList).queue(message
-                                        -> server.setStatusUpdatesMessage(message.getIdLong()));
-                                serverStorageUtility.addServer(server);
+                                        -> {
+                                    forumScraperServer.setStatusUpdatesMessage(message.getIdLong());
+                                    server.setForumScraperServer(forumScraperServer);
+                                });
+                                serverConfiguration.addServer(server);
                             })
                     );
         }

@@ -1,22 +1,24 @@
-package tech.adelemphii.skynet.discord.forumscraper.utility.data;
+package tech.adelemphii.skynet.discord.global.utility.data;
 
 import com.google.gson.Gson;
 import tech.adelemphii.skynet.Skynet;
-import tech.adelemphii.skynet.discord.forumscraper.objects.Server;
+import tech.adelemphii.skynet.discord.global.objects.Server;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ServerStorageUtility {
+public class ServerConfiguration {
 
     private final Map<Long, Server> servers = new HashMap<>();
     private File serversFile;
+
     private final String botName;
 
-    public ServerStorageUtility(String botName) {
+    public ServerConfiguration(String botName) {
         this.botName = botName;
     }
+
     public Server getServer(Long id) {
         return servers.get(id);
     }
@@ -51,7 +53,7 @@ public class ServerStorageUtility {
             gson.toJson(servers.values(), writer);
             writer.flush();
             writer.close();
-            System.out.println("Server information saved.");
+            Skynet.getInstance().getLogger().info("Server information saved.");
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -74,10 +76,11 @@ public class ServerStorageUtility {
                 for (Server server : serverArray) {
                     servers.put(server.getServerID(), server);
                 }
-                System.out.println("Server information has been loaded.");
+                Skynet.getInstance().getLogger().info("Server information has been loaded.");
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
+
 }
