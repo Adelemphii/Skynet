@@ -29,4 +29,4 @@ Yuh4j is a java adaptation of another Discord bot for the Arma 3 Skyburger Compa
 
 Old Preview: https://youtu.be/5riZnlefDJk?t=196
 
-[Invite the bot!](https://discord.gg/vup8dGbmD2)
+[Invite the bot!](https://discord.com/api/oauth2/authorize?client_id=1019981710382874654&permissions=2147601472&scope=bot)
