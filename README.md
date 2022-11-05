@@ -27,5 +27,6 @@ Yuh4j is a java adaptation of another Discord bot for the Arma 3 Skyburger Compa
 
 **y4jconfig** View the various configurations for the ForumScraper module.
 
+Old Preview: https://youtu.be/5riZnlefDJk?t=196
 
 [Invite the bot!](https://discord.gg/vup8dGbmD2)
