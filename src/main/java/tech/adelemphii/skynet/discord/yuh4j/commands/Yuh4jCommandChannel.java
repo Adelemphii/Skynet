@@ -14,6 +14,7 @@ import tech.adelemphii.skynet.discord.global.utility.GeneralUtility;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Yuh4jCommandChannel implements BaseCommand {
 
@@ -29,7 +30,8 @@ public class Yuh4jCommandChannel implements BaseCommand {
         Server server = discordBot.getServerConfiguration().getServer(guild.getIdLong());
 
         String[] args = event.getMessage().getContentRaw()
-                .replace(server.getPrefix() + name(), "").split(" ");
+                .replace(server.getPrefix() + name() + " ", "").split(" ");
+
         if(args.length == 0) {
             GeneralUtility.addNegativeReaction(event.getMessage());
             help(server, event.getMessage());
@@ -44,7 +46,8 @@ public class Yuh4jCommandChannel implements BaseCommand {
             try {
                 Long.parseLong(args[2]);
             } catch(NumberFormatException e) {
-                GeneralUtility.addNegativeReaction(event.getMessage());
+                event.getMessage().reply("That is not a valid ID")
+                        .queue(msg -> msg.delete().queueAfter(10, TimeUnit.SECONDS));
                 help(server, event.getMessage());
                 return;
             }
@@ -60,8 +63,6 @@ public class Yuh4jCommandChannel implements BaseCommand {
         } else if(args[0].equalsIgnoreCase("update")) {
             GeneralUtility.addPositiveReaction(event.getMessage());
             update(guild, event.getMessage());
-        } else if(args[0].equalsIgnoreCase("help")) {
-            help(server, event.getMessage());
         } else {
             help(server, event.getMessage());
         }

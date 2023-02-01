@@ -17,6 +17,7 @@ import tech.adelemphii.skynet.discord.global.utility.data.Configuration;
 import tech.adelemphii.skynet.discord.yuh4j.commands.Yuh4jCommandChannel;
 import tech.adelemphii.skynet.discord.yuh4j.commands.Yuh4jCommandConfig;
 import tech.adelemphii.skynet.discord.global.utility.data.ServerConfiguration;
+import tech.adelemphii.skynet.discord.yuh4j.events.ScheduleListener;
 
 import java.io.File;
 import java.util.HashMap;
@@ -73,7 +74,7 @@ public class DiscordBot {
         api.addEventListener(new ReadyListener(this));
 
         // yuh4j events
-        //api.addEventListener(new ScheduleListener(this)); --TODO: Doesn't work properly
+        api.addEventListener(new ScheduleListener(this));
     }
 
     private void registerCommands() {

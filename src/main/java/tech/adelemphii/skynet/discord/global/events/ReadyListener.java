@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
-import tech.adelemphii.skynet.discord.forumscraper.utility.ScrapeUtility;
 import tech.adelemphii.skynet.discord.DiscordBot;
 import tech.adelemphii.skynet.discord.global.objects.Server;
 import tech.adelemphii.skynet.discord.yuh4j.objects.Mission;
@@ -46,9 +45,10 @@ public class ReadyListener implements EventListener {
             BukkitRunnable yuh4jRunnable = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    if(server == null) {
+                    if(server == null || !server.getYuh4jServer().isEnabled()) {
                         return;
                     }
+
                     int timeBeforeOp = server.getYuh4jServer().getMinutesBeforeOpTimer();
 
                     ArrayList<Mission> missions = Yuh4jMessageUtility.scrapeMessages(guildReadyEvent.getGuild(), server);
@@ -91,10 +91,16 @@ public class ReadyListener implements EventListener {
             BukkitRunnable forumScraperRunnable = new BukkitRunnable() {
                 @Override
                 public void run() {
+                    /* TODO: Errors when this runs, disable for now; it also doesn't save the message when
+                            running the command, sometimes?.
+                    if(server == null || !server.getForumScraperServer().isEnabled()) {
+                        return;
+                    }
                     ScrapeUtility.sendStatusUpdates(guildReadyEvent.getGuild());
                     ScrapeUtility.sendPopularTopics(guildReadyEvent.getGuild());
                     ScrapeUtility.sendLatestTopics(guildReadyEvent.getGuild());
                     ScrapeUtility.sendPingUpdate(guildReadyEvent.getGuild());
+                    */
                 }
             };
 

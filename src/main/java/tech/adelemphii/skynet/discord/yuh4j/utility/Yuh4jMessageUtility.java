@@ -176,7 +176,7 @@ public class Yuh4jMessageUtility {
 
         List<User> reactedUsers = new ArrayList<>();
         for(MessageReaction messageReaction : reactions) {
-            if(messageReaction.getEmoji().asUnicode().getName().equalsIgnoreCase("\uD83C\uDF5E")) {
+            if(messageReaction.getEmoji().getAsReactionCode().equals("\uD83C\uDF5E")) {
                 ReactionPaginationAction reactionPaginationAction = messageReaction.retrieveUsers();
                 reactionPaginationAction.forEach(reactedUsers::add);
             }
