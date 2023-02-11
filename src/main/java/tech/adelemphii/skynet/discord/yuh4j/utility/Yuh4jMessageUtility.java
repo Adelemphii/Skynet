@@ -106,7 +106,7 @@ public class Yuh4jMessageUtility {
             return null;
         }
 
-        String regex = "@everyone(?:\\s*)(.*?)(?:\\s*[,|-]*\\s*<t:)([0-9]*(?=(?::[tTdDfFR])?>))";
+        String regex = "@everyone[^\\[]+[^]]+(?:]|\\b)(?!\")\\s*(.*?)\\s*[,|-]*\\s*<t:([0-9]*(?=(?::[tTdDfFR])?>))";
 
         Pattern pattern = Pattern.compile(regex);
 
@@ -120,7 +120,8 @@ public class Yuh4jMessageUtility {
 
                 String timestamp = StringUtils.substringAfter(match, "<");
                 String name = StringUtils.substringBefore(match, " <");
-                name = name.replace("@everyone ", "").replaceAll("\n", "");
+                name = name.replace("@everyone ", "").replaceAll("\n", "")
+                        .replaceAll("\\[.*]", "");
 
                 long timestampMillis;
                 try {
