@@ -177,7 +177,8 @@ public class Yuh4jMessageUtility {
 
         List<User> reactedUsers = new ArrayList<>();
         for(MessageReaction messageReaction : reactions) {
-            if(messageReaction.getEmoji().getAsReactionCode().equals("\uD83C\uDF5E")) {
+            if(messageReaction.getEmoji().getAsReactionCode().equals("\uD83C\uDF5E") ||
+                    messageReaction.getEmoji().getAsReactionCode().equals("\uD83E\uDED3")) {
                 ReactionPaginationAction reactionPaginationAction = messageReaction.retrieveUsers();
                 reactionPaginationAction.forEach(reactedUsers::add);
             }
@@ -197,7 +198,9 @@ public class Yuh4jMessageUtility {
                 sb.append("\n");
             }
         }
-        sb.deleteCharAt(sb.length() - 2);
+        if(sb.length() - 2 > 0) {
+            sb.deleteCharAt(sb.length() - 2);
+        }
 
         embedBuilder.setDescription("[" + mission.getMissionName() + "](" + mission.getMessage().getJumpUrl() + ") begins <" + mission.getTimestamp() + ":R>");
 
