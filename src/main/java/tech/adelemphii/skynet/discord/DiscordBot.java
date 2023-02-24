@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import tech.adelemphii.skynet.Skynet;
 import tech.adelemphii.skynet.discord.forumscraper.commands.FSChannel;
 import tech.adelemphii.skynet.discord.forumscraper.commands.FSConfig;
+import tech.adelemphii.skynet.discord.forumscraper.events.FSReadyListener;
 import tech.adelemphii.skynet.discord.global.commands.*;
 import tech.adelemphii.skynet.discord.global.events.CommandListener;
 import tech.adelemphii.skynet.discord.global.events.ReadyListener;
@@ -72,6 +73,9 @@ public class DiscordBot {
         // global events
         api.addEventListener(new CommandListener(this));
         api.addEventListener(new ReadyListener(this));
+
+        // forumscraper events
+        api.addEventListener(new FSReadyListener(this));
 
         // yuh4j events
         api.addEventListener(new ScheduleListener(this));
