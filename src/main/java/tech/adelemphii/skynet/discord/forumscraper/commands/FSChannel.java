@@ -5,13 +5,13 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import tech.adelemphii.skynet.Skynet;
-import tech.adelemphii.skynet.discord.global.commands.BaseCommand;
 import tech.adelemphii.skynet.discord.forumscraper.objects.ForumScraperServer;
-import tech.adelemphii.skynet.discord.forumscraper.utility.ScrapeUtility;
+import tech.adelemphii.skynet.discord.forumscraper.utility.FSGeneralUtility;
+import tech.adelemphii.skynet.discord.global.commands.BaseCommand;
 import tech.adelemphii.skynet.discord.global.enums.CommandType;
-import tech.adelemphii.skynet.discord.global.utility.data.ServerConfiguration;
 import tech.adelemphii.skynet.discord.global.objects.Server;
 import tech.adelemphii.skynet.discord.global.utility.GeneralUtility;
+import tech.adelemphii.skynet.discord.global.utility.data.ServerConfiguration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +32,6 @@ public class FSChannel implements BaseCommand {
                 GeneralUtility.addPositiveReaction(event.getMessage());
                 saveConfig();
             } else if(args[0].equalsIgnoreCase("update")) {
-                GeneralUtility.addPositiveReaction(event.getMessage());
                 update(guild, event.getMessage());
             } else {
                 help(server, event.getMessage());
@@ -72,33 +71,13 @@ public class FSChannel implements BaseCommand {
     }
 
     private void update(Guild guild, Message message) {
-        String popularTopicError = ScrapeUtility.sendPopularTopics(guild);
-        String latestTopicError = ScrapeUtility.sendLatestTopics(guild);
-        String statusUpdateError = ScrapeUtility.sendStatusUpdates(guild);
-        String pingUpdateError = ScrapeUtility.sendPingUpdate(guild);
-
-        StringBuilder sb = new StringBuilder();
-
-        if(popularTopicError != null) {
-            sb.append(popularTopicError).append(", ");
+        String error = FSGeneralUtility.sendUpdates(guild);
+        if(error != null) {
+            message.reply(error).queue();
+            return;
         }
 
-        if(latestTopicError != null) {
-            sb.append(latestTopicError).append(", ");
-        }
-
-        if(statusUpdateError != null) {
-            sb.append(statusUpdateError).append(", ");
-        }
-
-        if(pingUpdateError != null) {
-            sb.append(pingUpdateError).append(", ");
-        }
-
-        if(sb.length() != 0) {
-            sb.replace(sb.charAt(sb.indexOf(",")), sb.charAt(sb.indexOf(",")) + 1, "");
-            message.reply(sb.toString()).queue();
-        }
+        GeneralUtility.addPositiveReaction(message);
     }
 
     private boolean set(String[] args, Server server) {

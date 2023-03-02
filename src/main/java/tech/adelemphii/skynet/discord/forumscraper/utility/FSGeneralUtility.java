@@ -114,4 +114,37 @@ public class FSGeneralUtility {
                 .getBytes(StandardCharsets.UTF_8));
         return saveImageToCache(decodedBytes, name);
     }
+
+    public static String sendUpdates(Guild guild) {
+        // TODO: Why do I do error handling like this? I should use exceptions in the future.
+
+        String popularTopicError = ScrapeUtility.sendPopularTopics(guild);
+        String latestTopicError = ScrapeUtility.sendLatestTopics(guild);
+        String statusUpdateError = ScrapeUtility.sendStatusUpdates(guild);
+        String pingUpdateError = ScrapeUtility.sendPingUpdate(guild);
+
+        StringBuilder sb = new StringBuilder();
+
+        if(popularTopicError != null) {
+            sb.append(popularTopicError).append(", ");
+        }
+
+        if(latestTopicError != null) {
+            sb.append(latestTopicError).append(", ");
+        }
+
+        if(statusUpdateError != null) {
+            sb.append(statusUpdateError).append(", ");
+        }
+
+        if(pingUpdateError != null) {
+            sb.append(pingUpdateError).append(", ");
+        }
+
+        if(sb.length() != 0) {
+            sb.replace(sb.charAt(sb.indexOf(",")), sb.charAt(sb.indexOf(",")) + 1, "");
+            return sb.toString();
+        }
+        return null;
+    }
 }
