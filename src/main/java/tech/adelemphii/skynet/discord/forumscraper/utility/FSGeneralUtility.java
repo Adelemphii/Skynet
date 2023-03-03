@@ -144,8 +144,8 @@ public class FSGeneralUtility {
             sb.append(pingUpdateError).append(", ");
         }
 
-        if(sb.length() != 0) {
-            sb.replace(sb.charAt(sb.indexOf(",")), sb.charAt(sb.indexOf(",")) + 1, "");
+        if(sb.length() > 1) {
+            sb.deleteCharAt(sb.length() - 1);
             return sb.toString();
         }
         return null;
