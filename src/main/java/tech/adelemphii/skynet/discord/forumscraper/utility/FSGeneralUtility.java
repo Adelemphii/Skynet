@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class FSGeneralUtility {
 
@@ -116,6 +117,8 @@ public class FSGeneralUtility {
     }
 
     public static String sendUpdates(Guild guild) {
+        Skynet.getInstance().getLogger().log(Level.INFO, "Running forum scraper for "
+                + guild.getName());
         // TODO: Why do I do error handling like this? I should use exceptions in the future.
 
         String popularTopicError = ScrapeUtility.sendPopularTopics(guild);

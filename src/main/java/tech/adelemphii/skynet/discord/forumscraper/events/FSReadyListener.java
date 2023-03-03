@@ -43,6 +43,5 @@ public class FSReadyListener implements EventListener {
             forumScraperRunnable.runTaskTimerAsynchronously(discordBot.getPlugin(), 0, forumScraperLength);
             discordBot.addUpdateRunnable(server, forumScraperRunnable);
         }
-
     }
 }

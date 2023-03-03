@@ -20,8 +20,8 @@ import tech.adelemphii.skynet.discord.forumscraper.objects.Author;
 import tech.adelemphii.skynet.discord.forumscraper.objects.ForumScraperServer;
 import tech.adelemphii.skynet.discord.forumscraper.objects.Topic;
 import tech.adelemphii.skynet.discord.forumscraper.objects.TopicType;
-import tech.adelemphii.skynet.discord.global.utility.data.ServerConfiguration;
 import tech.adelemphii.skynet.discord.global.objects.Server;
+import tech.adelemphii.skynet.discord.global.utility.data.ServerConfiguration;
 
 import java.awt.*;
 import java.io.File;
@@ -162,24 +162,23 @@ public class ScrapeUtility {
         }
 
         assert channel != null;
-        if(forumScraperServer.getPopularTopicMessage() == null) {
+        if(forumScraperServer.getPopularTopicMessage() == 0) {
             channel.sendMessageEmbeds(embedList).queue(message -> {
                 forumScraperServer.setPopularTopicMessage(message.getIdLong());
                 server.setForumScraperServer(forumScraperServer);
+                serverConfiguration.addServer(server);
             });
             serverConfiguration.addServer(server);
         } else {
             channel.retrieveMessageById(forumScraperServer.getPopularTopicMessage())
-                    .queue(topicMessage -> topicMessage.editMessageEmbeds(embedList).queue(),
-                            new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
-                                channel.sendMessageEmbeds(embedList).queue(message
-                                        -> {
-                                    forumScraperServer.setPopularTopicMessage(message.getIdLong());
-                                    server.setForumScraperServer(forumScraperServer);
-                                });
-                                serverConfiguration.addServer(server);
-                            })
-                    );
+                    .queue(message -> message.editMessageEmbeds(embedList).queue(),
+                    new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
+                        forumScraperServer.setPopularTopicMessage(0);
+                        server.setForumScraperServer(forumScraperServer);
+                        serverConfiguration.addServer(server);
+
+                        sendPopularTopics(guild);
+                    }));
         }
         return null;
     }
@@ -209,7 +208,7 @@ public class ScrapeUtility {
         ArrayList<MessageEmbed> embedList = filterEmbeds(topicList);
 
         assert channel != null;
-        if(forumScraperServer.getPopularTopicMessage() == null) {
+        if(forumScraperServer.getLatestTopicsMessage() == 0) {
             channel.sendMessageEmbeds(embedList).queue(message -> {
                 forumScraperServer.setLatestTopicsMessage(message.getIdLong());
                 server.setForumScraperServer(forumScraperServer);
@@ -217,16 +216,14 @@ public class ScrapeUtility {
             serverConfiguration.addServer(server);
         } else {
             channel.retrieveMessageById(forumScraperServer.getLatestTopicsMessage())
-                    .queue(topicMessage -> topicMessage.editMessageEmbeds(embedList).queue(),
-                            new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
-                                channel.sendMessageEmbeds(embedList).queue(message
-                                        -> {
-                                    forumScraperServer.setLatestTopicsMessage(message.getIdLong());
-                                    server.setForumScraperServer(forumScraperServer);
-                                });
-                                serverConfiguration.addServer(server);
-                            })
-                    );
+                    .queue(message -> message.editMessageEmbeds(embedList).queue(),
+                    new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
+                        forumScraperServer.setLatestTopicsMessage(0);
+                        server.setForumScraperServer(forumScraperServer);
+                        serverConfiguration.addServer(server);
+
+                        sendLatestTopics(guild);
+                    }));
         }
         return null;
     }
@@ -263,7 +260,7 @@ public class ScrapeUtility {
         TextChannel channel = guild.getTextChannelById(forumScraperServer.getPingUpdateChannel());
 
         assert channel != null;
-        if(forumScraperServer.getPingUpdateMessage() == null) {
+        if(forumScraperServer.getPingUpdateMessage() == 0) {
             FSGeneralUtility.getFileFromCache(name);
             File file = FSGeneralUtility.getFileFromCache(name);
             if(file.exists()) {
@@ -272,6 +269,7 @@ public class ScrapeUtility {
                         .queue(message -> {
                             forumScraperServer.setPingUpdateMessage(message.getIdLong());
                             server.setForumScraperServer(forumScraperServer);
+                            serverConfiguration.addServer(server);
                         });
             } else {
                 channel.sendMessageEmbeds(List.of(serverEmbed.build(), websiteEmbed.build()))
@@ -283,18 +281,14 @@ public class ScrapeUtility {
             serverConfiguration.addServer(server);
         } else {
             channel.retrieveMessageById(forumScraperServer.getPingUpdateMessage())
-                    .queue(topicMessage ->
-                                    topicMessage.editMessageEmbeds(List.of(serverEmbed.setThumbnail(null).build(), websiteEmbed.build()))
-                                            .queue(),
-                            new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
-                                channel.sendMessageEmbeds(java.util.List.of(serverEmbed.setThumbnail(null).build(), websiteEmbed.build()))
-                                        .queue(message
-                                                -> {
-                                            forumScraperServer.setPingUpdateMessage(message.getIdLong());
-                                            server.setForumScraperServer(forumScraperServer);
-                                        });
-                                serverConfiguration.addServer(server);
-                            }));
+                    .queue(message -> message.editMessageEmbeds(List.of(serverEmbed.setThumbnail(null).build(), websiteEmbed.build())).queue(),
+                    new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
+                        forumScraperServer.setPingUpdateMessage(0);
+                        server.setForumScraperServer(forumScraperServer);
+                        serverConfiguration.addServer(server);
+
+                        sendPingUpdate(guild);
+                    }));
         }
         return null;
     }
@@ -324,7 +318,7 @@ public class ScrapeUtility {
         ArrayList<MessageEmbed> embedList = filterEmbeds(topicList);
 
         assert channel != null;
-        if(forumScraperServer.getStatusUpdatesMessage() == null) {
+        if(forumScraperServer.getStatusUpdatesMessage() == 0) {
             channel.sendMessageEmbeds(embedList).queue(message -> {
                 forumScraperServer.setStatusUpdatesMessage(message.getIdLong());
                 server.setForumScraperServer(forumScraperServer);
@@ -332,16 +326,14 @@ public class ScrapeUtility {
             serverConfiguration.addServer(server);
         } else {
             channel.retrieveMessageById(forumScraperServer.getStatusUpdatesMessage())
-                    .queue(topicMessage -> topicMessage.editMessageEmbeds(embedList).queue(),
-                            new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
-                                channel.sendMessageEmbeds(embedList).queue(message
-                                        -> {
-                                    forumScraperServer.setStatusUpdatesMessage(message.getIdLong());
-                                    server.setForumScraperServer(forumScraperServer);
-                                });
-                                serverConfiguration.addServer(server);
-                            })
-                    );
+                    .queue(message -> message.editMessageEmbeds(embedList).queue(),
+                    new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
+                        forumScraperServer.setStatusUpdatesMessage(0);
+                        server.setForumScraperServer(forumScraperServer);
+                        serverConfiguration.addServer(server);
+
+                        sendStatusUpdates(guild);
+                    }));
         }
         return null;
     }
@@ -397,7 +389,6 @@ public class ScrapeUtility {
                 DateTime posTime = DateTimeFormat.forPattern("MM/dd/yy hh:mm  a").withZone(DateTimeZone.UTC).parseDateTime(postTime);
 
                 Topic topic = new Topic(text, topicLink, posTime, author, TopicType.STATUS_UPDATE, commentAmount);
-
                 topic.setEmbed(createStatusEmbed(topic, Color.PINK));
 
                 topics.add(topic);

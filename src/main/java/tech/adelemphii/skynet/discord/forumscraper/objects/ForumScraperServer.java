@@ -32,7 +32,7 @@ public class ForumScraperServer {
         this.popularTopicsChannel = popularTopicsChannel;
     }
 
-    public Long getLatestTopicsChannel() {
+    public long getLatestTopicsChannel() {
         return latestTopicsChannel;
     }
 
@@ -40,7 +40,7 @@ public class ForumScraperServer {
         this.latestTopicsChannel = latestTopicsChannel;
     }
 
-    public Long getStatusUpdatesChannel() {
+    public long getStatusUpdatesChannel() {
         return statusUpdatesChannel;
     }
 
@@ -48,7 +48,7 @@ public class ForumScraperServer {
         this.statusUpdatesChannel = statusUpdatesChannel;
     }
 
-    public Long getPopularTopicMessage() {
+    public long getPopularTopicMessage() {
         return popularTopicMessage;
     }
 
@@ -56,7 +56,7 @@ public class ForumScraperServer {
         this.popularTopicMessage = popularTopicMessage;
     }
 
-    public Long getLatestTopicsMessage() {
+    public long getLatestTopicsMessage() {
         return latestTopicsMessage;
     }
 
@@ -64,7 +64,7 @@ public class ForumScraperServer {
         this.latestTopicsMessage = latestTopicsMessage;
     }
 
-    public Long getStatusUpdatesMessage() {
+    public long getStatusUpdatesMessage() {
         return statusUpdatesMessage;
     }
 
@@ -72,19 +72,19 @@ public class ForumScraperServer {
         this.statusUpdatesMessage = statusUpdatesMessage;
     }
 
-    public Long getPingUpdateChannel() {
+    public long getPingUpdateChannel() {
         return pingUpdateChannel;
     }
 
-    public void setPingUpdateChannel(Long pingUpdateChannel) {
+    public void setPingUpdateChannel(long pingUpdateChannel) {
         this.pingUpdateChannel = pingUpdateChannel;
     }
 
-    public Long getPingUpdateMessage() {
+    public long getPingUpdateMessage() {
         return pingUpdateMessage;
     }
 
-    public void setPingUpdateMessage(Long pingUpdateMessage) {
+    public void setPingUpdateMessage(long pingUpdateMessage) {
         this.pingUpdateMessage = pingUpdateMessage;
     }
 
