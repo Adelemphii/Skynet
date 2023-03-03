@@ -4,8 +4,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.exceptions.ErrorHandler;
-import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.TimeFormat;
 import org.joda.time.DateTime;
@@ -172,6 +170,7 @@ public class ScrapeUtility {
             });
             serverConfiguration.addServer(server);
         } else {
+            /*
             channel.retrieveMessageById(forumScraperServer.getPopularTopicMessage())
                     .queue(message -> message.editMessageEmbeds(embedList).queue(),
                     new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
@@ -179,13 +178,18 @@ public class ScrapeUtility {
                         server.setForumScraperServer(forumScraperServer);
                         serverConfiguration.addServer(server);
 
-                        /*
+
                         channel.sendMessageEmbeds(embedList).queue(message -> {
                             forumScraperServer.setPopularTopicMessage(message.getIdLong());
                             server.setForumScraperServer(forumScraperServer);
                             serverConfiguration.addServer(server);
-                        }); */
+                        });
                     }));
+             */
+
+            channel.retrieveMessageById(forumScraperServer.getPopularTopicMessage())
+                    .flatMap(message -> message.editMessageEmbeds(embedList))
+                    .queue();
         }
     }
 
@@ -219,19 +223,25 @@ public class ScrapeUtility {
             });
             serverConfiguration.addServer(server);
         } else {
+            /*
             channel.retrieveMessageById(forumScraperServer.getLatestTopicsMessage())
                     .queue(message -> message.editMessageEmbeds(embedList).queue(),
                     new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
                         forumScraperServer.setLatestTopicsMessage(0);
                         server.setForumScraperServer(forumScraperServer);
 
-                        /*
+
                         channel.sendMessageEmbeds(embedList).queue(message -> {
                             forumScraperServer.setLatestTopicsMessage(message.getIdLong());
                             server.setForumScraperServer(forumScraperServer);
-                        }); */
+                        });
                         serverConfiguration.addServer(server);
                     }));
+            */
+
+            channel.retrieveMessageById(forumScraperServer.getLatestTopicsMessage())
+                    .flatMap(message -> message.editMessageEmbeds(embedList))
+                    .queue();
         }
     }
 
@@ -283,6 +293,7 @@ public class ScrapeUtility {
             }
             serverConfiguration.addServer(server);
         } else {
+            /*
             channel.retrieveMessageById(forumScraperServer.getPingUpdateMessage())
                     .queue(message -> message.editMessageEmbeds(List.of(serverEmbed.setThumbnail(null).build(), websiteEmbed.build())).queue(),
                     new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
@@ -290,14 +301,22 @@ public class ScrapeUtility {
                         server.setForumScraperServer(forumScraperServer);
                         serverConfiguration.addServer(server);
 
-                        /*
+
                         channel.sendMessageEmbeds(List.of(serverEmbed.build(), websiteEmbed.build()))
                                 .queue(message -> {
                                     forumScraperServer.setPingUpdateMessage(message.getIdLong());
                                     server.setForumScraperServer(forumScraperServer);
-                                }); */
+                                });
                         serverConfiguration.addServer(server);
                     }));
+            */
+
+            channel.retrieveMessageById(forumScraperServer.getPingUpdateMessage())
+                    .flatMap(message -> message.editMessageEmbeds(List.of(
+                            serverEmbed.setThumbnail(null).build(),
+                            websiteEmbed.build())
+                    ))
+                    .queue();
         }
     }
 
@@ -330,6 +349,7 @@ public class ScrapeUtility {
             });
             serverConfiguration.addServer(server);
         } else {
+            /*
             channel.retrieveMessageById(forumScraperServer.getStatusUpdatesMessage())
                     .queue(message -> message.editMessageEmbeds(embedList).queue(),
                     new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, (e) -> {
@@ -337,13 +357,17 @@ public class ScrapeUtility {
                         server.setForumScraperServer(forumScraperServer);
                         serverConfiguration.addServer(server);
 
-                        /*
                         channel.sendMessageEmbeds(embedList).queue(message -> {
                             forumScraperServer.setStatusUpdatesMessage(message.getIdLong());
                             server.setForumScraperServer(forumScraperServer);
-                        }); */
+                        });
                         serverConfiguration.addServer(server);
                     }));
+            */
+
+            channel.retrieveMessageById(forumScraperServer.getStatusUpdatesMessage())
+                    .flatMap(message -> message.editMessageEmbeds(embedList))
+                    .queue();
         }
     }
 
@@ -356,7 +380,12 @@ public class ScrapeUtility {
         }
     }
 
-    public static ArrayList<Topic> scrapeStatuses(String url) {
+    public static ArrayList<Topic> scrapeStatuses(String url) throws ScrapeException {
+        boolean upCheck = upCheck(url);
+        if(!upCheck) {
+            throw new ScrapeException("WEBSITE IS DOWN: " + url);
+        }
+
         ArrayList<Topic> topics = new ArrayList<>();
         try {
             Document document = Jsoup.connect(url).get();
@@ -404,17 +433,19 @@ public class ScrapeUtility {
             }
             return topics;
         } catch (IOException e) {
-            System.out.println("Error: Is the website offline?");
+            throw new ScrapeException("ERROR SCRAPING STATUS UPDATES: " + e.getMessage());
         }
-        return null;
     }
 
-    public static ArrayList<Topic> scrapeTopics(String url) {
-        ArrayList<Topic> topics = new ArrayList<>();
+    public static ArrayList<Topic> scrapeTopics(String url) throws ScrapeException {
+        boolean upCheck = upCheck(url);
+        if(!upCheck) {
+            throw new ScrapeException("WEBSITE IS DOWN: " + url);
+        }
 
+        ArrayList<Topic> topics = new ArrayList<>();
         try {
             Document document = Jsoup.connect(url).get();
-
             Elements listElements = document.getElementsByClass("ipsDataList ipsDataList_reducedSpacing ipsPad_half");
 
             int i = 1;
@@ -467,8 +498,7 @@ public class ScrapeUtility {
             }
             return topics;
         } catch (IOException e) {
-            System.out.println("Error: Is the website offline?");
-            return null;
+            throw new ScrapeException("ERROR SCRAPING TOPICS: " + e.getMessage());
         }
     }
 }
