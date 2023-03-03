@@ -6,10 +6,9 @@ import net.dv8tion.jda.api.hooks.EventListener;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import tech.adelemphii.skynet.discord.DiscordBot;
+import tech.adelemphii.skynet.discord.forumscraper.objects.exceptions.ScrapeException;
 import tech.adelemphii.skynet.discord.forumscraper.utility.FSGeneralUtility;
 import tech.adelemphii.skynet.discord.global.objects.Server;
-
-import java.util.logging.Level;
 
 public class FSReadyListener implements EventListener {
 
@@ -31,9 +30,11 @@ public class FSReadyListener implements EventListener {
                     if(server == null || !server.getForumScraperServer().isEnabled()) {
                         return;
                     }
-                    String error = FSGeneralUtility.sendUpdates(guildReadyEvent.getGuild());
-                    if(error != null) {
-                        discordBot.getPlugin().getLogger().log(Level.SEVERE, error);
+
+                    try {
+                        FSGeneralUtility.sendUpdates(guildReadyEvent.getGuild());
+                    } catch(ScrapeException e) {
+                        e.printStackTrace();
                     }
                 }
             };

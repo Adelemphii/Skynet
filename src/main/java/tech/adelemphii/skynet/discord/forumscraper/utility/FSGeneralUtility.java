@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.io.FileUtils;
 import tech.adelemphii.skynet.Skynet;
+import tech.adelemphii.skynet.discord.forumscraper.objects.exceptions.ScrapeException;
 import tech.adelemphii.skynet.discord.global.objects.Server;
 
 import java.awt.*;
@@ -116,38 +117,12 @@ public class FSGeneralUtility {
         return saveImageToCache(decodedBytes, name);
     }
 
-    public static String sendUpdates(Guild guild) {
-        Skynet.getInstance().getLogger().log(Level.INFO, "Running forum scraper for "
-                + guild.getName());
-        // TODO: Why do I do error handling like this? I should use exceptions in the future.
+    public static void sendUpdates(Guild guild) throws ScrapeException {
+        Skynet.getInstance().getLogger().log(Level.INFO, "Running forum scraper for " + guild.getName());
 
-        String popularTopicError = ScrapeUtility.sendPopularTopics(guild);
-        String latestTopicError = ScrapeUtility.sendLatestTopics(guild);
-        String statusUpdateError = ScrapeUtility.sendStatusUpdates(guild);
-        String pingUpdateError = ScrapeUtility.sendPingUpdate(guild);
-
-        StringBuilder sb = new StringBuilder();
-
-        if(popularTopicError != null) {
-            sb.append(popularTopicError).append(", ");
-        }
-
-        if(latestTopicError != null) {
-            sb.append(latestTopicError).append(", ");
-        }
-
-        if(statusUpdateError != null) {
-            sb.append(statusUpdateError).append(", ");
-        }
-
-        if(pingUpdateError != null) {
-            sb.append(pingUpdateError).append(", ");
-        }
-
-        if(sb.length() > 1) {
-            sb.deleteCharAt(sb.length() - 1);
-            return sb.toString();
-        }
-        return null;
+        ScrapeUtility.sendPopularTopics(guild);
+        ScrapeUtility.sendLatestTopics(guild);
+        ScrapeUtility.sendStatusUpdates(guild);
+        ScrapeUtility.sendPingUpdate(guild);
     }
 }

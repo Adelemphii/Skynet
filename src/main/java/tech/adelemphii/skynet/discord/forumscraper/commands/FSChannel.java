@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import tech.adelemphii.skynet.Skynet;
 import tech.adelemphii.skynet.discord.forumscraper.objects.ForumScraperServer;
+import tech.adelemphii.skynet.discord.forumscraper.objects.exceptions.ScrapeException;
 import tech.adelemphii.skynet.discord.forumscraper.utility.FSGeneralUtility;
 import tech.adelemphii.skynet.discord.global.commands.BaseCommand;
 import tech.adelemphii.skynet.discord.global.enums.CommandType;
@@ -15,6 +16,7 @@ import tech.adelemphii.skynet.discord.global.utility.data.ServerConfiguration;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class FSChannel implements BaseCommand {
 
@@ -71,13 +73,13 @@ public class FSChannel implements BaseCommand {
     }
 
     private void update(Guild guild, Message message) {
-        String error = FSGeneralUtility.sendUpdates(guild);
-        if(error != null) {
-            message.reply(error).queue();
-            return;
+        try {
+            FSGeneralUtility.sendUpdates(guild);
+            GeneralUtility.addPositiveReaction(message);
+        } catch(ScrapeException e) {
+            message.reply(e.getMessage()).queue(msg -> msg.delete().queueAfter(30, TimeUnit.SECONDS));
+            GeneralUtility.addNegativeReaction(message);
         }
-
-        GeneralUtility.addPositiveReaction(message);
     }
 
     private boolean set(String[] args, Server server) {
